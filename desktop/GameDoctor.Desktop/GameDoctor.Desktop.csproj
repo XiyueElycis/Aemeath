@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>GameDoctor.Desktop</AssemblyName>
+    <RootNamespace>GameDoctor.Desktop</RootNamespace>
+    <!-- EXE / 任务栏图标（多尺寸 ico：16/32/48/64/128/256） -->
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- UI 内展示用 Logo + 窗口标题栏图标（WPF Resource，pack URI 引用） -->
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\logo.ico" />
+  </ItemGroup>
+
+</Project>

@@ -148,6 +148,8 @@
 - **执行模型**：`execute` / `execute_workflow` 均为 `async`，CLI 与测试通过 `asyncio.run` 触发。
 
 ## 快速开始
+克隆代码仓库
+git clone https://github.com/XiyueElycis/Aemeath.git
 
 ### 安装核心依赖
 

@@ -1,6 +1,6 @@
 # 智能体系统文档
 
-本文档介绍 Game Doctor 的多智能体系统架构和使用方法。
+本文档介绍 Aemeath Agent 的多智能体系统架构和使用方法。
 
 ## 系统架构
 
@@ -25,7 +25,7 @@
 **功能**：检测游戏与系统的兼容性
 
 ```python
-from gamedoctor.agents.compatibility import CompatibilityAgent
+from aemeath_agent.agents.compatibility import CompatibilityAgent
 
 agent = CompatibilityAgent()
 task = AgentTask(
@@ -39,7 +39,7 @@ result = agent.execute(task)
 **功能**：智能规划安装流程
 
 ```python
-from gamedoctor.agents.installation import InstallationAgent
+from aemeath_agent.agents.installation import InstallationAgent
 
 agent = InstallationAgent({"auto_verify": True})
 task = AgentTask(
@@ -53,23 +53,23 @@ result = agent.execute(task)
 
 ### 列出所有智能体
 ```bash
-gamedoctor agents
+aemeath_agent agents
 ```
 
 ### 分析游戏
 ```bash
 # 简单分析
-gamedoctor analyze "GTA5"
+aemeath_agent analyze "GTA5"
 
 # 完整分析
-gamedoctor analyze "GTA5" --full
+aemeath_agent analyze "GTA5" --full
 ```
 
 ## 工作流示例
 
 ### 创建自定义工作流
 ```python
-from gamedoctor.orchestrator.orchestrator import GameAgentOrchestrator, OrchestrationPlan, OrchestrationStage
+from aemeath_agent.orchestrator.orchestrator import GameAgentOrchestrator, OrchestrationPlan, OrchestrationStage
 
 # 创建编排器
 orchestrator = GameAgentOrchestrator()
@@ -116,7 +116,7 @@ result = await orchestrator.execute_workflow(plan, context)
 
 ### 创建自定义智能体
 ```python
-from gamedoctor.agents.base_agent import BaseAgent, AgentTask, AgentResult
+from aemeath_agent.agents.base_agent import BaseAgent, AgentTask, AgentResult
 
 class CustomAgent(BaseAgent):
     def __init__(self, config=None):
@@ -138,7 +138,7 @@ class CustomAgent(BaseAgent):
 
 ### 注册智能体
 ```python
-from gamedoctor.orchestrator.agent_factory import AgentFactory
+from aemeath_agent.orchestrator.agent_factory import AgentFactory
 
 AgentFactory.register_agent("custom", CustomAgent)
 ```

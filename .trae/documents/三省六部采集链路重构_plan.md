@@ -10,19 +10,19 @@
 
 | 论断 | 证据 |
 |---|---|
-| 治理链路只填 GameContext 2 字段 | [coordinator.py L239-241](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/governance/coordinator.py#L239-L241)，全文件仅此 1 处 `GameContext(` |
-| 指纹层仅旧管线调用 | [pipeline.py L18-20](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/pipeline.py) 导入 detect_engine/detect_platform/probe_runtime；governance 包零引用 |
-| 任务数据三处构造点 | [planner.py:202-206](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/governance/planner.py)、coordinator.py:402-406（直办）、coordinator.py:551-555（`_execute_agent`） |
-| GameContext 10 字段 | [models.py:328-341](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/models.py) |
+| 治理链路只填 GameContext 2 字段 | [coordinator.py L239-241](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/governance/coordinator.py#L239-L241)，全文件仅此 1 处 `GameContext(` |
+| 指纹层仅旧管线调用 | [pipeline.py L18-20](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/pipeline.py) 导入 detect_engine/detect_platform/probe_runtime；governance 包零引用 |
+| 任务数据三处构造点 | [planner.py:202-206](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/governance/planner.py)、coordinator.py:402-406（直办）、coordinator.py:551-555（`_execute_agent`） |
+| GameContext 10 字段 | [models.py:328-341](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/models.py) |
 | system_info 死代码 | `get_system_requirements_check()` 模块级函数体内用 `self.`（L323+）；`get_gpu_info` 用 `.contains()`（L105-148）；`Win32_DirectX` 假 WMI 类（L189-234） |
-| 兼容性参数错配 | [compatibility_agent.py:193-217](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/compatibility/compatibility_agent.py) 第 4 参传 `requirements["storage"]`；`_is_cpu_compatible` 恒 True；需求表硬编码 |
-| installation 无视 game_dir | [installation_agent.py:59-141](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/installation/installation_agent.py) execute 只读 `game_name`；`_optimize_install_path(game_name, source, sx)` 无 game_dir 参 |
+| 兼容性参数错配 | [compatibility_agent.py:193-217](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/compatibility/compatibility_agent.py) 第 4 参传 `requirements["storage"]`；`_is_cpu_compatible` 恒 True；需求表硬编码 |
+| installation 无视 game_dir | [installation_agent.py:59-141](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/installation/installation_agent.py) execute 只读 `game_name`；`_optimize_install_path(game_name, source, sx)` 无 game_dir 参 |
 | 知识库无灌库入口 | 全仓 grep `.upsert(` = **0 调用方**；默认空库 |
-| 向量导入路径错位 | [retriever.py:171](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/knowledge/retriever.py) `from ...rag import rag_data` 超出顶级包必失败；`rag/rag_data.py` 真实存在于项目顶层 |
-| 工厂双轨命名 | [agent_factory.py:197-210](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/orchestrator/agent_factory.py) 键为 audio/social/community/network，而 configs 的 name 与 BaseAgent.name 是 audio_expert 等 |
-| pipeline 类型注解缺导入 | [pipeline.py:23-32](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/pipeline.py) 确无 SearchResult/KnowledgeHit/LogEntry |
+| 向量导入路径错位 | [retriever.py:171](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/knowledge/retriever.py) `from ...rag import rag_data` 超出顶级包必失败；`rag/rag_data.py` 真实存在于项目顶层 |
+| 工厂双轨命名 | [agent_factory.py:197-210](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/orchestrator/agent_factory.py) 键为 audio/social/community/network，而 configs 的 name 与 BaseAgent.name 是 audio_expert 等 |
+| pipeline 类型注解缺导入 | [pipeline.py:23-32](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/pipeline.py) 确无 SearchResult/KnowledgeHit/LogEntry |
 | 审议官可拿到任务结果 | `execute_workflow` 返回值含 `task_results: Dict[str, AgentResult]`（orchestrator.py:107,138），review_outcome 可据此加 unverified 规则 |
-| AgentResult 可扩展 | [base_agent.py:65-87](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/base_agent.py)，ReviewVerdict 已有 warnings 字段（reviewer.py:31-36） |
+| AgentResult 可扩展 | [base_agent.py:65-87](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/base_agent.py)，ReviewVerdict 已有 warnings 字段（reviewer.py:31-36） |
 
 ### 对文档示例代码的 3 处必要修正（实施时以本计划为准）
 
@@ -39,7 +39,7 @@
 
 ### 第 1 批：接通采集主干（P0，收益最大、无外部依赖）
 
-- **新增** `src/gamedoctor/context_builder.py`
+- **新增** `src/aemeath_agent/context_builder.py`
   - `build_fingerprint(game_name, game_dir) -> TechStackFingerprint`：三段探测各自 try/except 降级，绝不抛异常
   - `build_context(game_name, game_dir) -> tuple[GameContext, dict]`：指纹回填 GameContext 扁平字段（见下），同时返回可 JSON 化的 `fingerprint_dict`
   - `_dir_size_mb()` 带 20000 文件上限
@@ -83,7 +83,7 @@
 
 ### 第 5 批：知识库灌库与零配置命中（P0，与第 1 批并列最高收益）
 
-- **新增** `src/gamedoctor/knowledge/seed.py`：
+- **新增** `src/aemeath_agent/knowledge/seed.py`：
   - `seed_from_rag(rag_root=None) -> dict[str,int]`，根目录默认 `<项目根>/rag`（`Path(__file__).parents[3]`）
   - 解析：front-matter（title/game/category/tags）+ `# 解决方案` 节为 template + `# 常见错误日志` 节每行/tags/文件名为签名；一篇 md 产生多条签名索引
   - 跳过 rag_data.md、minecraft.md 等无「常见错误日志」节的文件

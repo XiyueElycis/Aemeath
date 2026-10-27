@@ -20,9 +20,9 @@ from typing import List
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentResult, AgentTask, BaseAgent
-from gamedoctor.models import GameContext
-from gamedoctor.orchestrator.orchestrator import (
+from aemeath_agent.agents.base_agent import AgentResult, AgentTask, BaseAgent
+from aemeath_agent.models import GameContext
+from aemeath_agent.orchestrator.orchestrator import (
     GameAgentOrchestrator,
     OrchestrationPlan,
     OrchestrationStage,

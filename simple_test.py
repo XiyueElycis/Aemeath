@@ -14,19 +14,19 @@ def test_imports():
     print("=== 测试导入 ===")
     try:
         # 测试基础导入
-        from gamedoctor.agents.base_agent import BaseAgent, AgentTask, AgentResult
+        from aemeath_agent.agents.base_agent import BaseAgent, AgentTask, AgentResult
         print("[OK] 基础智能体类导入成功")
 
         # 测试编排器
-        from gamedoctor.orchestrator.orchestrator import GameAgentOrchestrator
+        from aemeath_agent.orchestrator.orchestrator import GameAgentOrchestrator
         print("[OK] 编排器导入成功")
 
         # 测试智能体工厂
-        from gamedoctor.orchestrator.agent_factory import AgentFactory
+        from aemeath_agent.orchestrator.agent_factory import AgentFactory
         print("[OK] 智能体工厂导入成功")
 
         # 测试模型
-        from gamedoctor.models import GameContext
+        from aemeath_agent.models import GameContext
         print("[OK] GameContext 导入成功")
 
         return True
@@ -39,7 +39,7 @@ def test_basic_functionality():
     print("\n=== 测试基本功能 ===")
     try:
         # 测试 AgentTask 创建
-        from gamedoctor.agents.base_agent import AgentTask
+        from aemeath_agent.agents.base_agent import AgentTask
 
         task = AgentTask(
             name="test_task",
@@ -49,7 +49,7 @@ def test_basic_functionality():
         print(f"[OK] 创建任务: {task.name}")
 
         # 测试 AgentResult 创建
-        from gamedoctor.agents.base_agent import AgentResult
+        from aemeath_agent.agents.base_agent import AgentResult
 
         result = AgentResult(
             success=True,
@@ -59,7 +59,7 @@ def test_basic_functionality():
         print(f"[OK] 创建结果: {result.success}")
 
         # 测试 AgentFactory
-        from gamedoctor.orchestrator.agent_factory import AgentFactory
+        from aemeath_agent.orchestrator.agent_factory import AgentFactory
 
         available_agents = AgentFactory.get_available_agents()
         print(f"[OK] 可用智能体: {available_agents}")
@@ -74,7 +74,7 @@ def test_cli():
     print("\n=== 测试 CLI ===")
     try:
         from typer.testing import CliRunner
-        from gamedoctor.cli import app
+        from aemeath_agent.cli import app
 
         runner = CliRunner()
 

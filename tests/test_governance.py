@@ -19,18 +19,18 @@ from typing import Any, Dict, List
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentResult, AgentTask, BaseAgent
-from gamedoctor.governance.coordinator import GovernanceCoordinator
-from gamedoctor.governance.permissions import Role, can_dispatch
-from gamedoctor.governance.planner import Planner
-from gamedoctor.governance.reviewer import Reviewer
-from gamedoctor.governance.state_machine import (
+from aemeath_agent.agents.base_agent import AgentResult, AgentTask, BaseAgent
+from aemeath_agent.governance.coordinator import GovernanceCoordinator
+from aemeath_agent.governance.permissions import Role, can_dispatch
+from aemeath_agent.governance.planner import Planner
+from aemeath_agent.governance.reviewer import Reviewer
+from aemeath_agent.governance.state_machine import (
     ALLOWED_TRANSITIONS,
     GovState,
     TaskTicket,
     TransitionError,
 )
-from gamedoctor.orchestrator.orchestrator import (
+from aemeath_agent.orchestrator.orchestrator import (
     GameAgentOrchestrator,
     OrchestrationPlan,
     OrchestrationStage,

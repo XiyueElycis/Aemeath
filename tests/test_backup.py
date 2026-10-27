@@ -1,6 +1,6 @@
 """备份与回滚测试。"""
 
-from gamedoctor.fixer.backup.manager import BackupManager
+from aemeath_agent.fixer.backup.manager import BackupManager
 
 
 def test_backup_and_rollback(tmp_path):

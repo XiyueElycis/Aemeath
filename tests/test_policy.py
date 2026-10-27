@@ -1,7 +1,7 @@
 """分级授权策略测试。"""
 
-from gamedoctor.fixer.policy.levels import DefaultAuthorizationPolicy
-from gamedoctor.models import ActionLevel, RepairAction
+from aemeath_agent.fixer.policy.levels import DefaultAuthorizationPolicy
+from aemeath_agent.models import ActionLevel, RepairAction
 
 
 def test_l1_stays_auto():

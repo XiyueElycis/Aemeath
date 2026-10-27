@@ -15,7 +15,7 @@ def test_agent_factory():
     """测试智能体工厂。"""
     print("=== 测试智能体工厂 ===")
     try:
-        from gamedoctor.orchestrator.agent_factory import AgentFactory, AgentManager
+        from aemeath_agent.orchestrator.agent_factory import AgentFactory, AgentManager
 
         # 获取可用智能体
         agents = AgentFactory.get_available_agents()
@@ -36,15 +36,15 @@ def test_orchestrator():
     """测试智能体编排器。"""
     print("\n=== 测试智能体编排器 ===")
     try:
-        from gamedoctor.orchestrator.orchestrator import GameAgentOrchestrator
-        from gamedoctor.orchestrator.agent_factory import AgentManager
+        from aemeath_agent.orchestrator.orchestrator import GameAgentOrchestrator
+        from aemeath_agent.orchestrator.agent_factory import AgentManager
 
         # 创建编排器
         orchestrator = GameAgentOrchestrator()
 
         # 创建智能体管理器
         manager = AgentManager()
-        from gamedoctor.orchestrator.agent_factory import DEFAULT_AGENT_CONFIGS
+        from aemeath_agent.orchestrator.agent_factory import DEFAULT_AGENT_CONFIGS
 
         # 注册智能体
         manager.register_agents(DEFAULT_AGENT_CONFIGS)
@@ -55,7 +55,7 @@ def test_orchestrator():
         print(f"注册的智能体数量: {len(agents)}")
 
         # 创建一个简单任务
-        from gamedoctor.agents.base_agent import AgentTask
+        from aemeath_agent.agents.base_agent import AgentTask
 
         task = AgentTask(
             name="test_task",
@@ -79,7 +79,7 @@ def test_compatibility_agent():
     """测试兼容性智能体。"""
     print("\n=== 测试兼容性智能体 ===")
     try:
-        from gamedoctor.agents.compatibility.compatibility_agent import CompatibilityAgent
+        from aemeath_agent.agents.compatibility.compatibility_agent import CompatibilityAgent
 
         # 创建智能体
         agent = CompatibilityAgent()
@@ -87,7 +87,7 @@ def test_compatibility_agent():
         print(f"能力: {agent.get_capabilities()}")
 
         # 创建任务
-        from gamedoctor.agents.base_agent import AgentTask
+        from aemeath_agent.agents.base_agent import AgentTask
 
         task = AgentTask(
             name="compatibility_check",
@@ -114,7 +114,7 @@ def test_system_info():
     """测试系统信息收集。"""
     print("\n=== 测试系统信息收集 ===")
     try:
-        from gamedoctor.utils.system_info import get_system_info
+        from aemeath_agent.utils.system_info import get_system_info
 
         system_info = get_system_info()
         print("系统信息:")
@@ -136,7 +136,7 @@ def test_cli_commands():
     print("\n=== 测试 CLI 命令 ===")
     try:
         from typer.testing import CliRunner
-        from gamedoctor.cli import app
+        from aemeath_agent.cli import app
 
         runner = CliRunner()
 

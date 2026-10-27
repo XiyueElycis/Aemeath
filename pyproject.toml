@@ -3,20 +3,21 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gamedoctor"
+name = "aemeath_agent"
 version = "0.1.0"
-description = "通用游戏报错诊断与修复专家（Game Doctor）—— CLI 工具"
+description = "爱弥斯 · 游戏辅助安装与排障智能体（GUI）"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Game Doctor" }]
+authors = [{ name = "Aemeath Agent" }]
 dependencies = [
-    "typer>=0.12",
-    "rich>=13",
     "httpx>=0.27",
     "tomli>=2; python_version < '3.11'",
     "keyring>=25",
     "psutil>=5.9",
+    "pillow>=10",
+    "numpy>=1.26",
+    "PySide6>=6.6",
 ]
 
 [project.optional-dependencies]
@@ -31,15 +32,22 @@ server = ["fastapi>=0.110", "uvicorn>=0.29"]
 dev = ["pytest>=8", "pytest-cov", "ruff"]
 
 [project.scripts]
-gamedoctor = "gamedoctor.cli:app"
-gamedoctor-server = "gamedoctor.server:main"
-gameAgent = "gamedoctor.launcher:main"
+Aemeath = "aemeath_agent.launcher:main"
+Aemeath-code = "aemeath_agent.coding.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-gamedoctor = ["py.typed"]
+aemeath_agent = [
+    "py.typed",
+    "data/*.json",
+    "galgame/web/*.html",
+    "galgame/web/*.css",
+    "galgame/web/*.js",
+    "galgame/web/assets/*.jpeg",
+    "galgame/web/assets/*.jpg",
+]
 
 [tool.ruff]
 line-length = 100

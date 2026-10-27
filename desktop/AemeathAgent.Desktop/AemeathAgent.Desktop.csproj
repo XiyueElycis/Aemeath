@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- 系统托盘 NotifyIcon（桌宠隐藏时唤回） -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>AemeathAgent.Desktop</AssemblyName>
+    <RootNamespace>AemeathAgent.Desktop</RootNamespace>
+    <!-- EXE / 任务栏图标（多尺寸 ico：16/32/48/64/128/256） -->
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+    <!-- PerMonitorV2 高 DPI 声明（透明分层窗口定位/渲染正确性） -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+  </ItemGroup>
+
+  <!-- 移除 WinForms/System.Drawing 隐式全局 using，避免与 WPF 类型（Application/Brush/Button/TextBox 等）歧义；
+       代码中以全限定名 System.Windows.Forms.* 引用托盘 -->
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 品牌头像（爱弥斯立绘抠图）：主 UI Logo + 窗口标题栏图标 -->
+    <Resource Include="Assets\brand.png" />
+  </ItemGroup>
+
+</Project>

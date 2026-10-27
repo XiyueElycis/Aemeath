@@ -12,8 +12,8 @@ from __future__ import annotations
 
 import pytest
 
-from gamedoctor.models import ActionLevel, RepairAction, RepairPlan, ReviewResult
-from gamedoctor.solver.critic import StructuralCritic
+from aemeath_agent.models import ActionLevel, RepairAction, RepairPlan, ReviewResult
+from aemeath_agent.solver.critic import StructuralCritic
 
 
 def test_unknown_primitive():

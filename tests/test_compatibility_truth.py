@@ -10,15 +10,15 @@ import asyncio
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentTask
-from gamedoctor.agents.compatibility import compatibility_agent as ca
-from gamedoctor.agents.compatibility.compatibility_agent import (
+from aemeath_agent.agents.base_agent import AgentTask
+from aemeath_agent.agents.compatibility import compatibility_agent as ca
+from aemeath_agent.agents.compatibility.compatibility_agent import (
     CompatibilityAgent,
     _parse_cpu_tier,
     _parse_gpu_tier,
     _leading_number,
 )
-from gamedoctor.models import GameContext
+from aemeath_agent.models import GameContext
 
 
 def _system_info(cpu="Intel(R) Core(TM) i7-12700", gpu="NVIDIA GeForce RTX 4070",

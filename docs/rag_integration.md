@@ -1,10 +1,10 @@
 # RAG 功能集成文档
 
-本文档说明 Game Doctor 如何集成 RAG（Retrieval-Augmented Generation）功能。
+本文档说明 Aemeath Agent 如何集成 RAG（Retrieval-Augmented Generation）功能。
 
 ## 概述
 
-Game Doctor 支持两种知识源：
+Aemeath Agent 支持两种知识源：
 1. **SQLite 知识库**：基于错误签名的精确/模糊匹配
 2. **RAG 知识库**：基于语义相似度的向量检索
 
@@ -12,11 +12,11 @@ Game Doctor 支持两种知识源：
 
 ## 配置
 
-在 `~/.gamedoctor/config.toml` 中配置 RAG 相关选项：
+在 `~/.aemeath_agent/config.toml` 中配置 RAG 相关选项：
 
 ```toml
 [knowledge]
-# SQLite 路径，空则默认 ~/.gamedoctor/knowledge.db
+# SQLite 路径，空则默认 ~/.aemeath_agent/knowledge.db
 db_path = ""
 
 # 是否启用向量检索（chromadb）
@@ -38,7 +38,7 @@ embedding_model = "BAAI/bge-small-zh-v1.5"
 
 ```bash
 # 安装向量数据库依赖
-pip install 'gamedoctor[vector]'
+pip install 'aemeath_agent[vector]'
 
 # 或手动安装
 pip install chromadb>=0.4
@@ -84,26 +84,26 @@ tags: ["标签1", "标签2"]
 ### 1. 检查依赖状态
 
 ```bash
-gamedoctor config check-deps
+aemeath_agent config check-deps
 ```
 
 ### 2. 查看索引状态
 
 ```bash
-gamedoctor rag-index --status
+aemeath_agent rag-index --status
 ```
 
 ### 3. 索引游戏知识
 
 ```bash
 # 索引所有游戏
-gamedoctor rag-index
+aemeath_agent rag-index
 
 # 索引指定游戏
-gamedoctor rag-index --game "Grand_Theft_Auto_V"
+aemeath_agent rag-index --game "Grand_Theft_Auto_V"
 
 # 强制重建索引
-gamedoctor rag-index --force
+aemeath_agent rag-index --force
 ```
 
 ### 4. 进行诊断
@@ -112,10 +112,10 @@ gamedoctor rag-index --force
 
 ```bash
 # 诊断游戏问题
-gamedoctor diagnose "GTA5" --error "0xc000007b"
+aemeath_agent diagnose "GTA5" --error "0xc000007b"
 
 # 带自动修复
-gamedoctor diagnose "GTA5" --error "0xc000007b" --fix
+aemeath_agent diagnose "GTA5" --error "0xc000007b" --fix
 ```
 
 ## 工作流程
@@ -148,8 +148,8 @@ gamedoctor diagnose "GTA5" --error "0xc000007b" --fix
 ### 直接使用 RAG 检索器
 
 ```python
-from gamedoctor.knowledge.retriever import HybridRetriever
-from gamedoctor.config import load
+from aemeath_agent.knowledge.retriever import HybridRetriever
+from aemeath_agent.config import load
 
 # 创建混合检索器
 cfg = load()
@@ -167,7 +167,7 @@ for hit in results:
 ### 程序化索引
 
 ```python
-from gamedoctor.knowledge.retriever import check_and_index_games
+from aemeath_agent.knowledge.retriever import check_and_index_games
 
 # 索引指定游戏
 indexed = check_and_index_games(["Grand_Theault_Auto_V"])
@@ -208,7 +208,7 @@ embeddings = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-small-zh-v1.5")
 ### 4. 检索结果为空
 
 - 检查游戏目录是否有 .md 文件
-- 运行 `gamedoctor rag-index` 重新索引
+- 运行 `aemeath_agent rag-index` 重新索引
 - 查看配置是否正确设置
 
 ## 性能优化
@@ -224,7 +224,7 @@ embeddings = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-small-zh-v1.5")
 继承 `GameKnowledgeAdapter` 实现自定义知识源：
 
 ```python
-from gamedoctor.knowledge.rag_data import GameKnowledgeAdapter
+from aemeath_agent.knowledge.rag_data import GameKnowledgeAdapter
 
 class CustomAdapter(GameKnowledgeAdapter):
     def index(self, force=False):

@@ -13,7 +13,7 @@ def test_config():
     """测试配置加载。"""
     print("=== 测试配置加载 ===")
     try:
-        from gamedoctor.config import load
+        from aemeath_agent.config import load
         cfg = load()
 
         print(f"[OK] 配置加载成功")
@@ -29,7 +29,7 @@ def test_dependency_check():
     """测试依赖检查。"""
     print("\n=== 测试依赖检查 ===")
     try:
-        from gamedoctor.utils.dependency_check import DependencyChecker
+        from aemeath_agent.utils.dependency_check import DependencyChecker
 
         deps = DependencyChecker.check_vector_dependencies()
         print(f"[OK] 依赖检查成功")
@@ -38,7 +38,7 @@ def test_dependency_check():
             print(f"  {status} {dep}")
 
         # 测试依赖检查命令
-        from gamedoctor.cli import config_app
+        from aemeath_agent.cli import config_app
         return True
     except Exception as e:
         print(f"[ERROR] 依赖检查失败: {e}")
@@ -48,8 +48,8 @@ def test_hybrid_retriever():
     """测试混合检索器。"""
     print("\n=== 测试混合检索器 ===")
     try:
-        from gamedoctor.knowledge.retriever import HybridRetriever
-        from gamedoctor.config import load
+        from aemeath_agent.knowledge.retriever import HybridRetriever
+        from aemeath_agent.config import load
 
         cfg = load()
         retriever = HybridRetriever(cfg)
@@ -73,13 +73,13 @@ def test_pipeline():
     """测试诊断流水线。"""
     print("\n=== 测试诊断流水线 ===")
     try:
-        from gamedoctor.pipeline import DiagnosisPipeline
+        from aemeath_agent.pipeline import DiagnosisPipeline
 
         pipeline = DiagnosisPipeline()
         print("[OK] 诊断流水线创建成功")
 
         # 测试 _gather_context
-        from gamedoctor.models import TechStackFingerprint, ErrorReport, ErrorCategory
+        from aemeath_agent.models import TechStackFingerprint, ErrorReport, ErrorCategory
 
         # 创建测试数据
         fp = TechStackFingerprint(game_name="Test Game")

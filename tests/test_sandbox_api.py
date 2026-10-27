@@ -12,11 +12,11 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from gamedoctor.sandbox import ApprovalDecision, ApprovalGate, ApprovalRequest, SandboxSession
-from gamedoctor.sandbox import io as sxio
-from gamedoctor.sandbox.gate import get_gate, reset_gate
-from gamedoctor.sandbox.session import _ACTIVE_SESSIONS
-from gamedoctor.server import (
+from aemeath_agent.sandbox import ApprovalDecision, ApprovalGate, ApprovalRequest, SandboxSession
+from aemeath_agent.sandbox import io as sxio
+from aemeath_agent.sandbox.gate import get_gate, reset_gate
+from aemeath_agent.sandbox.session import _ACTIVE_SESSIONS
+from aemeath_agent.server import (
     ApprovalDecisionRequest,
     app,
     decide_approval,
@@ -27,7 +27,7 @@ from gamedoctor.server import (
 @pytest.fixture
 def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     apphome = tmp_path / "apphome"
-    monkeypatch.setattr("gamedoctor.sandbox.session.app_dir", lambda: apphome)
+    monkeypatch.setattr("aemeath_agent.sandbox.session.app_dir", lambda: apphome)
     reset_gate()
     _ACTIVE_SESSIONS.clear()
     game = tmp_path / "game"

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from gamedoctor.knowledge import retriever as retriever_mod
-from gamedoctor.knowledge import seed as seed_mod
-from gamedoctor.knowledge.retriever import SQLiteRetriever, _load_rag_data_module
-from gamedoctor.knowledge.seed import DEFAULT_RAG_ROOT, parse_document, seed_from_rag
-from gamedoctor.knowledge.store import SQLiteKnowledgeStore
+from aemeath_agent.knowledge import retriever as retriever_mod
+from aemeath_agent.knowledge import seed as seed_mod
+from aemeath_agent.knowledge.retriever import SQLiteRetriever, _load_rag_data_module
+from aemeath_agent.knowledge.seed import DEFAULT_RAG_ROOT, parse_document, seed_from_rag
+from aemeath_agent.knowledge.store import SQLiteKnowledgeStore
 
 LWJGL_DOC = """---
 title: "LWJGL 原生库加载失败"

@@ -2,26 +2,26 @@
 
 > 任务依赖为串行切片；每个切片自带测试。所有文件改动前备份到
 > `.backups/access_sandbox_<时间戳>/`。沙箱模块统一放在新包
-> `src/gamedoctor/sandbox/`；session 为 None 时所有 helper 等价直接落盘。
+> `src/aemeath_agent/sandbox/`；session 为 None 时所有 helper 等价直接落盘。
 
 ## Task 1: 沙箱会话核心（overlay 覆盖层 + 变更集 + apply/discard）
 
 - **Status**: `completed`
 - **Completion Evidence**:
-  - 新增 [session.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/session.py)（映射/变更/落盘三职责分区）、[io.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/io.py)、[__init__.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/__init__.py)；测试 [test_sandbox_session.py](file:///d:/Python/游戏辅助安装智能体/tests/test_sandbox_session.py) 10 项全过（TR-1.1~1.6 全绿；含零写入哈希快照、3 条穿越拒绝、透传/tombstone、apply 备份+side 回写、discard 零变化、direct 直通、千文件零复制、持久化往返）。
+  - 新增 [session.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/session.py)（映射/变更/落盘三职责分区）、[io.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/io.py)、[__init__.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/__init__.py)；测试 [test_sandbox_session.py](file:///d:/Python/游戏辅助安装智能体/tests/test_sandbox_session.py) 10 项全过（TR-1.1~1.6 全绿；含零写入哈希快照、3 条穿越拒绝、透传/tombstone、apply 备份+side 回写、discard 零变化、direct 直通、千文件零复制、持久化往返）。
   - TR-1.7 rubric 自评 5/5：映射（map_for_read/write）、记录（note_write/delete 幂等合并含净零/复活）、落盘（备份→逐项 apply/失败保持 ready）职责分离，均可独立单测，全中文 docstring。
 - **Priority**: high
 - **Depends On**: None
 - **Description**:
-  - 新建 `src/gamedoctor/sandbox/__init__.py`、`session.py`、`io.py`。
+  - 新建 `src/aemeath_agent/sandbox/__init__.py`、`session.py`、`io.py`。
   - `session.py` 定义：
     - `ChangeOp` 枚举/常量（create/modify/delete/download/side_write）与 `Change` dataclass（relpath、op、虚拟路径、原始真实路径、大小、时间）。
     - `SandboxStatus`：running/ready/applied/discarded。
-    - `SandboxSession`：以 `~/.gamedoctor/sandbox/<ticket_id>/` 为根（`overlay/`、`side/`、`meta.json`），构造时仅建目录不复制真实根。
+    - `SandboxSession`：以 `~/.aemeath_agent/sandbox/<ticket_id>/` 为根（`overlay/`、`side/`、`meta.json`），构造时仅建目录不复制真实根。
     - 路径映射：`map_write(real_path) -> (虚拟Path, op)`（根内→overlay 保持相对结构；根外→side 按规整化相对名存放）；`map_read(real_path)`（overlay 命中→虚拟；tombstone→抛"已删除"语义；否则→真实路径）；全部经 `resolve()+relative_to` 校验，越界抛 `SandboxViolation`。
     - 记录 API：`record_write/record_delete/record_side`，幂等合并（同文件多次写只留一条最终 op）；`tombstone` 集合。
     - 持久化：`meta.json` 原子写（tmp+replace），类方法 `load(ticket_id)` / `list_ready()`。
-    - `apply_changes()`：复用 `fixer.backup.manager.BackupManager`（不适配则在 session 内等价实现）先备份被修改/删除真实文件到 `~/.gamedoctor/backups/apply_<ticket_id>/`，再逐项覆盖/新建/删除/side 回写；逐项捕获异常返回每项成败明细；成功后置 applied 并落 meta。
+    - `apply_changes()`：复用 `fixer.backup.manager.BackupManager`（不适配则在 session 内等价实现）先备份被修改/删除真实文件到 `~/.aemeath_agent/backups/apply_<ticket_id>/`，再逐项覆盖/新建/删除/side 回写；逐项捕获异常返回每项成败明细；成功后置 applied 并落 meta。
     - `discard()`：逐项无真实写入校验后 rmtree 沙箱根，置 discarded（meta 先留痕再删目录，list_ready 不再可见）。
   - `io.py` 定义 session 可选的统一文件原语：`read_bytes/read_text/write_bytes/write_text/remove/replace/copy_into/ensure_dir`——`session=None` 时直接对真实 Path 操作（direct 口径与现状逐字节一致），非 None 时全部重定向并自动记变更；文本编码沿用候选编码（utf-8-sig/utf-8/gbk/latin-1）。
 - **Acceptance Criteria Addressed**: AC-3, AC-4, AC-5, AC-6, NFR-1, NFR-4
@@ -39,11 +39,11 @@
 
 - **Status**: `completed`
 - **Completion Evidence**:
-  - 新增 [gate.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/gate.py)（ApprovalRequest/ApprovalDecision/ApprovalGate，asyncio.Event 无忙等、TTL 600s、单例 get_gate/reset_gate）；测试 [test_approval_gate.py](file:///d:/Python/游戏辅助安装智能体/tests/test_approval_gate.py) 7 项全过（TR-2.1~2.5 全绿：批准/拒绝/0.05s 超时/并行4条/票据过滤+重复决定/源码无 sleep/单例）。
+  - 新增 [gate.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/gate.py)（ApprovalRequest/ApprovalDecision/ApprovalGate，asyncio.Event 无忙等、TTL 600s、单例 get_gate/reset_gate）；测试 [test_approval_gate.py](file:///d:/Python/游戏辅助安装智能体/tests/test_approval_gate.py) 7 项全过（TR-2.1~2.5 全绿：批准/拒绝/0.05s 超时/并行4条/票据过滤+重复决定/源码无 sleep/单例）。
 - **Priority**: high
 - **Depends On**: None
 - **Description**:
-  - 新建 `src/gamedoctor/sandbox/gate.py`：
+  - 新建 `src/aemeath_agent/sandbox/gate.py`：
     - `ApprovalRequest` dataclass（id、ticket_id、agent、operation、target、kind 只读/写入/下载/安装、summary、created_at）。
     - `ApprovalGate`：`async request(req) -> bool`（登记 pending、`asyncio.Event` 等待、TTL 默认 600 秒，超时按拒绝并标注 `timeout=True`）；`list_pending(ticket_id=None)`；`decide(id, approve, reason="")` 唤醒；id 未知/已决返回 False 供调用方产生 4xx。
     - 模块级单例 `get_gate()`；提供测试用 `reset_gate()`。
@@ -61,7 +61,7 @@
 
 - **Status**: `completed`
 - **Completion Evidence**:
-  - [base_agent.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/base_agent.py) 新增 `_sandbox(data)`；四个落盘 agent（[script_editor](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/scripts/script_editor_agent.py)/[web_search](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/web/web_search_agent.py)/[save_manager](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/saves/save_manager_agent.py)/[installation](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/installation/installation_agent.py)）的写/删/备份/下载/建目录全部改走 `sandbox.io` 原语，备份走 side_dst+pristine_src；旧 `_read_text/_write_text` 与 shutil 死代码已清（仅剩只读 `shutil.disk_usage`）；改造前备份在 `.backups/access_sandbox_20260912-171433/`。
+  - [base_agent.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/base_agent.py) 新增 `_sandbox(data)`；四个落盘 agent（[script_editor](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/scripts/script_editor_agent.py)/[web_search](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/web/web_search_agent.py)/[save_manager](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/saves/save_manager_agent.py)/[installation](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/installation/installation_agent.py)）的写/删/备份/下载/建目录全部改走 `sandbox.io` 原语，备份走 side_dst+pristine_src；旧 `_read_text/_write_text` 与 shutil 死代码已清（仅剩只读 `shutil.disk_usage`）；改造前备份在 `.backups/access_sandbox_20260912-171433/`。
   - 新增 [test_agent_sandbox_io.py](file:///d:/Python/游戏辅助安装智能体/tests/test_agent_sandbox_io.py) 5 项全过（edit/create/replace/delete 四操作真实目录哈希零变化+overlay/side 产物、direct 真实落盘、根外绝对路径拒绝、web mock 下载进 overlay 且 op=download、save 备份进 side）；全量 **155 passed**（基线 133+10+7+5）。
   - TR-3.5 rubric 自评 5/5：grep 裸 IO（write_text/write_bytes/unlink/copy2/mkdir/open）在四文件中只剩 sxio 调用与只读 disk_usage，主流程无 if 分叉淹没。
 - **Priority**: high
@@ -86,14 +86,14 @@
 
 - **Status**: `completed`
 - **Completion Evidence**:
-  - 新增 [context.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/context.py)：`AccessContext`（classify 四类性质 read/write/download/install、authorize）、contextvar `use_access/bind_access/current_access`、执行收口共用 `gate_task`（拒绝/超时→skipped 结果）。
-  - 授权门挂在唯一执行收口 [base_agent.MultiAgentSystem.execute_task](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/base_agent.py#L218-L232)（工作流/HTTP 单跑/REPL）；协调器直办路径 [_execute_agent](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/governance/coordinator.py#L531-L572) 过同一道门后仍直调 agent.execute（保留异常冒泡→Cancelled 旧契约）。
-  - [coordinator.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/governance/coordinator.py)：run 增 `access_mode`（默认 direct），sandbox 时建会话（无 game_dir 建票据空根）、use_access 包裹工作流/直办、结束 seal（异常路径也封存）、_reply 带 sandbox 字段、回奏 FR-16 后缀；[agent_router.chat](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/llm/agent_router.py#L203-L233) 透传；[server.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/server.py#L83-L92) ChatRequest 增 `access_mode="sandbox"`，非法值 400；[cli.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/cli.py#L201-L220) `--sandbox/--direct/--access`（默认 direct）；[repl.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/repl.py) 沙箱三段式（控制台 y/N/a 授权+apply/discard）。改动前备份 `.backups/access_sandbox_20260912-174513/`。
+  - 新增 [context.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/context.py)：`AccessContext`（classify 四类性质 read/write/download/install、authorize）、contextvar `use_access/bind_access/current_access`、执行收口共用 `gate_task`（拒绝/超时→skipped 结果）。
+  - 授权门挂在唯一执行收口 [base_agent.MultiAgentSystem.execute_task](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/base_agent.py#L218-L232)（工作流/HTTP 单跑/REPL）；协调器直办路径 [_execute_agent](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/governance/coordinator.py#L531-L572) 过同一道门后仍直调 agent.execute（保留异常冒泡→Cancelled 旧契约）。
+  - [coordinator.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/governance/coordinator.py)：run 增 `access_mode`（默认 direct），sandbox 时建会话（无 game_dir 建票据空根）、use_access 包裹工作流/直办、结束 seal（异常路径也封存）、_reply 带 sandbox 字段、回奏 FR-16 后缀；[agent_router.chat](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/llm/agent_router.py#L203-L233) 透传；[server.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/server.py#L83-L92) ChatRequest 增 `access_mode="sandbox"`，非法值 400；[cli.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/cli.py#L201-L220) `--sandbox/--direct/--access`（默认 direct）；[repl.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/repl.py) 沙箱三段式（控制台 y/N/a 授权+apply/discard）。改动前备份 `.backups/access_sandbox_20260912-174513/`。
   - 新增 [test_access_integration.py](file:///d:/Python/游戏辅助安装智能体/tests/test_access_integration.py) 11 项全过（TR-4.1 批准2请求/拒绝2跳过依赖链/0.05s 超时、TR-4.2 direct 零请求无会话、TR-4.3 plan×access 矩阵+性质分类、TR-4.4 TestClient 400/缺省 sandbox、TR-4.5 直办过门注入、TR-4.6 tracker 五事件）；全量 **166 passed**，旧 133 测试零修改。
 - **Priority**: high
 - **Depends On**: Task 1, Task 2, Task 3
 - **Description**:
-  - 新建 `src/gamedoctor/sandbox/context.py`：contextvar 持有 `AccessContext(access_mode, ticket_id, game_name, game_dir, session|None, gate)`，提供 `use_access(ctx)` 上下文管理器与 `current_access()`；orchestrator 内并行 gather 子任务天然继承拷贝值。
+  - 新建 `src/aemeath_agent/sandbox/context.py`：contextvar 持有 `AccessContext(access_mode, ticket_id, game_name, game_dir, session|None, gate)`，提供 `use_access(ctx)` 上下文管理器与 `current_access()`；orchestrator 内并行 gather 子任务天然继承拷贝值。
   - `orchestrator.py` `_execute_task_with_context`：requires 通过后、execute 前读 current_access；sandbox 模式则构造 ApprovalRequest（agent=task.agent、operation 取 data.operation、target 取 data.file/game_dir/url、kind 按 MUTATING_AGENTS+operation 判定）→ `await gate.request`；批准→继续；拒绝/超时→返回 `AgentResult(success=False, skipped=True, message="用户拒绝授权/授权超时…")`；tracker 同步事件。direct 模式 tracker 记录"直接访问模式，跳过任务授权"。
   - `coordinator.py`：`run()` 增加 `access_mode` 入参（"direct"|"sandbox"，默认 direct 供内部/测试兼容）；sandbox 时创建 SandboxSession（game_dir 为根，无 game_dir 时以会话 id 建空根并仅允许 side），写入 flow_log/thinking 一行"沙箱模式：写入将在审核后落盘"；经 `use_access` 包住工作流/单智能体执行，并把 session 注入每个 `task.data["_sandbox_session"]`；全部任务结束后 `session.seal()`（running→ready）；直办路径同样注入。
   - `server.py`：`ChatRequest` 增加 `access_mode: str = "sandbox"`；校验非法值 422/400；传入 coordinator；ChatResponse 增加 `sandbox: {ticket_id, changes:[...], status}|None`；最终回奏话术区分"待审核应用/已完成"（FR-16）。
@@ -112,9 +112,9 @@
 
 - **Status**: `completed`
 - **Completion Evidence**:
-  - [session.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/session.py#L545-L564) 增加内存注册表 `register_session/get_registered_session/registered_sessions`；协调器 `_open_session` 创建即登记。
-  - [gate.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/sandbox/gate.py#L71-L126) 增加 `_decided` 已决留痕 + `is_decided()`，decide 即时写入消除并发竞态，支撑 404/409 区分。
-  - [server.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/server.py#L377-L486) 新增 6 端点：`GET /approvals/pending`、`POST /approvals/{id}`（非法 decision→400，未知→404，重复→409）、`GET /sandbox/pending`（内存 ready + 磁盘 list_sessions 合并去重）、`GET /sandbox/sessions/{id}`（文本变更附 new/old 预览，50k 截断）、`POST .../apply`（running→409、状态错误 SandboxStateError→409，返回 total/succeeded/failed/details）、`POST .../discard`。
+  - [session.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/session.py#L545-L564) 增加内存注册表 `register_session/get_registered_session/registered_sessions`；协调器 `_open_session` 创建即登记。
+  - [gate.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/sandbox/gate.py#L71-L126) 增加 `_decided` 已决留痕 + `is_decided()`，decide 即时写入消除并发竞态，支撑 404/409 区分。
+  - [server.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/server.py#L377-L486) 新增 6 端点：`GET /approvals/pending`、`POST /approvals/{id}`（非法 decision→400，未知→404，重复→409）、`GET /sandbox/pending`（内存 ready + 磁盘 list_sessions 合并去重）、`GET /sandbox/sessions/{id}`（文本变更附 new/old 预览，50k 截断）、`POST .../apply`（running→409、状态错误 SandboxStateError→409，返回 total/succeeded/failed/details）、`POST .../discard`。
   - 新增 [test_sandbox_api.py](file:///d:/Python/游戏辅助安装智能体/tests/test_sandbox_api.py) 8 项全过（pending→approve 同 loop 直调、400/404/409、详情预览、running 冲突、apply 明细五字段+备份核验、discard 零触碰、清内存后磁盘恢复 apply、内存/磁盘双路径 pending）；全量 **174 passed**（166+8）。
   - TR-5.1/5.2/5.3/5.4 全部有对应断言。
 - **Priority**: high
@@ -139,10 +139,10 @@
 
 - **Status**: `completed`
 - **Completion Evidence**:
-  - [MainWindow.xaml](file:///d:/Python/游戏辅助安装智能体/desktop/GameDoctor.Desktop/MainWindow.xaml#L54-L75) 模式行新增"访问：沙箱授权（默认）/直接访问"（GroupName=AccessMode，新拟物 RadioButton 样式 + 后果 ToolTip）；右下状态卡新增"待审核沙箱（N）"入口按钮（无遗留会话时折叠）。
-  - [AgentApiClient.cs](file:///d:/Python/游戏辅助安装智能体/desktop/GameDoctor.Desktop/AgentApiClient.cs#L306-L372)：ChatAsync 加 accessMode（请求体 access_mode）；新增 ApprovalInfo/ChangeInfo/SandboxInfo/PendingSandboxInfo/ApplyDetail/ApplyResult/SandboxSummary DTO 与 GetPendingApprovals/DecideApproval/GetPendingSandboxes/GetSandboxSession/ApplySandbox/DiscardSandbox 六方法。
-  - 新建 [SandboxWindows.cs](file:///d:/Python/游戏辅助安装智能体/desktop/GameDoctor.Desktop/SandboxWindows.cs)：ApprovalDialog（性质色标 只读/写入/下载/安装、智能体中文名、逐条批准拒绝、全部批准、裁决后自动刷新、10 分钟超时提示、稍后处理）；SandboxReviewWindow（会话下拉+刷新、变更列表带操作标签与错误标、新旧全文并排只读 Consoles 面板、二进制/截断/删除/建目录/根外各态文案、应用二次确认明示备份与不可撤回、丢弃明示零变化）。
-  - [MainWindow.xaml.cs](file:///d:/Python/游戏辅助安装智能体/desktop/GameDoctor.Desktop/MainWindow.xaml.cs#L430-L595)：GetAccessMode/OnAccessModeChanged；沙箱对话启动 1s DispatcherTimer 轮询（已见 id 去重、polling/dialog 双防重入、对话 finally 停表、窗口 Closing 停表）；回包 sandbox.change_count>0 时对话结束后弹审核窗口；启动与对话后刷新遗留会话入口；事件流加 approval→"授权"标签；发送中锁定四个模式/访问开关。
+  - [MainWindow.xaml](file:///d:/Python/游戏辅助安装智能体/desktop/AemeathAgent.Desktop/MainWindow.xaml#L54-L75) 模式行新增"访问：沙箱授权（默认）/直接访问"（GroupName=AccessMode，新拟物 RadioButton 样式 + 后果 ToolTip）；右下状态卡新增"待审核沙箱（N）"入口按钮（无遗留会话时折叠）。
+  - [AgentApiClient.cs](file:///d:/Python/游戏辅助安装智能体/desktop/AemeathAgent.Desktop/AgentApiClient.cs#L306-L372)：ChatAsync 加 accessMode（请求体 access_mode）；新增 ApprovalInfo/ChangeInfo/SandboxInfo/PendingSandboxInfo/ApplyDetail/ApplyResult/SandboxSummary DTO 与 GetPendingApprovals/DecideApproval/GetPendingSandboxes/GetSandboxSession/ApplySandbox/DiscardSandbox 六方法。
+  - 新建 [SandboxWindows.cs](file:///d:/Python/游戏辅助安装智能体/desktop/AemeathAgent.Desktop/SandboxWindows.cs)：ApprovalDialog（性质色标 只读/写入/下载/安装、智能体中文名、逐条批准拒绝、全部批准、裁决后自动刷新、10 分钟超时提示、稍后处理）；SandboxReviewWindow（会话下拉+刷新、变更列表带操作标签与错误标、新旧全文并排只读 Consoles 面板、二进制/截断/删除/建目录/根外各态文案、应用二次确认明示备份与不可撤回、丢弃明示零变化）。
+  - [MainWindow.xaml.cs](file:///d:/Python/游戏辅助安装智能体/desktop/AemeathAgent.Desktop/MainWindow.xaml.cs#L430-L595)：GetAccessMode/OnAccessModeChanged；沙箱对话启动 1s DispatcherTimer 轮询（已见 id 去重、polling/dialog 双防重入、对话 finally 停表、窗口 Closing 停表）；回包 sandbox.change_count>0 时对话结束后弹审核窗口；启动与对话后刷新遗留会话入口；事件流加 approval→"授权"标签；发送中锁定四个模式/访问开关。
   - TR-6.1 `dotnet build -c Debug`：**0 警告 0 错误**（net9.0-windows）；TR-6.2 代码审查通过。TR-6.3/6.4/6.5 真实联调在 Task 7 取证。
 - **Priority**: high
 - **Depends On**: Task 5
@@ -164,7 +164,16 @@
 
 ## Task 7: 全量回归与真实服务端到端联调
 
-- **Status**: `pending`
+- **Status**: `completed`
+- **Completion Evidence**:
+  - **TR-7.1 全量回归**：`python -X utf8 -m pytest tests/ -q` → **345 passed, 1 warning in 13.94s**（等于基线 345，无减少；唯一 warning 为 starlette TestClient 的 httpx 弃用提示，与本次改动无关）。`dotnet build -c Debug desktop/AemeathAgent.Desktop/AemeathAgent.Desktop.csproj` → **0 警告 0 错误**。
+  - **联调环境**：conda `gameAgent`（Python 3.10.21）+ `$env:PYTHONUTF8="0"`（否则 .pth 以 GBK 解码崩溃）启动 `python -m aemeath_agent.server`（127.0.0.1:8765），LLM=zhipu/glm-4.5-air 真实调用；冒烟游戏目录 `%TEMP%\gd_smoke_task7`（含 `config\settings.ini`、`Engine\Config\Engine.ini`）。注意：后端必须在**非受限 shell** 启动，否则 `~/.aemeath_agent/backups` 写入被拒（WinError 5）——属联调环境限制，非产品缺陷。
+  - **TR-7.2 direct 链路**：`access_mode=direct, mode=edit`，消息明确要求把 `<smoke>\config\settings.ini` 的 `MasterVolume=80` 改为 `55`。结果 `agent_used=script_editor`、授权请求 **0** 条、`sandbox=null`；真实文件 sha256 前 16 位 `ad4eff5f42e72cee` → `f5820413afd93bf1`（`MasterVolume=55` 生效）；`GET /sandbox/pending` 前后票据集合差为空（**无沙箱残留**）。
+  - **TR-7.3 sandbox apply 链路**：授权门拦截 1 条请求（`agent=script_editor / operation=edit / kind=write / target=<smoke>\config\settings.ini`），批准后票据 `GD-20260919-002` 记录 **3 项**变更（side 备份目录 mkdir + side_write 原件 + overlay 修改）；`apply` 前真实文件哈希仍为 `ad4eff5f42e72cee`（**未落盘**）；`POST /sandbox/sessions/GD-20260919-002/apply` → `status=applied, total=3, succeeded=3, failed=0`；apply 后真实文件 `f5820413afd93bf1`；备份 `~/.aemeath_agent/backups/apply_GD-20260919-002/20260919-022823/000_settings.ini` 经字节核验为**原件**（含 `MasterVolume=80`），与同目录 `manifest.json` 映射一致。
+  - **TR-7.3 sandbox discard 链路**：票据 `GD-20260919-003` 授权（拦截 1 条）后 `POST .../discard` → `{discarded: true}`；真实文件哈希**零变化**（`ad4eff5f42e72cee`）；`~/.aemeath_agent/backups` 文件集合前后差为空（**无新增备份**，含 agent 自发备份被丢弃）；沙箱目录已删除。
+  - **服务日志**：`~/.aemeath_agent/logs/server.log` 全程无 `ERROR` / `Traceback` / 500 响应。
+  - **清理**：后端进程已停止（8765 无监听）、`%TEMP%\gd_smoke_task7` 与驱动脚本已删除、沙箱票据目录 `GD-20260919-002` 已移除。
+  - **TR-7.4 rubric 自评 5/5**：三条主路径（direct / sandbox-apply / sandbox-discard）均有真实哈希前后对比、真实备份路径与无异常日志；功能、单测（345）、联调证据、备份目录齐备。
 - **Priority**: high
 - **Depends On**: Task 5, Task 6
 - **Description**:

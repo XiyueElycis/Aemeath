@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "comment": "游戏名称匹配知识库：key 为规范 game_id，names 是官方名（中文优先），aliases 是俗称/缩写/别名。新增游戏直接加条目；用户可在 ~/.aemeath_agent/game_aliases.json 放同结构文件，同 game_id 会整体覆盖本文件对应条目。",
+  "games": {
+    "wuthering_waves": {
+      "names": ["鸣潮", "Wuthering Waves"],
+      "aliases": ["wuwa"]
+    },
+    "genshin_impact": {
+      "names": ["原神", "Genshin Impact"],
+      "aliases": ["gi", "yuanshen"]
+    },
+    "honkai_star_rail": {
+      "names": ["崩坏：星穹铁道", "Honkai: Star Rail"],
+      "aliases": ["星铁", "崩铁", "hsr", "starrail"]
+    },
+    "zenless_zone_zero": {
+      "names": ["绝区零", "Zenless Zone Zero"],
+      "aliases": ["zzz", "绝区"]
+    },
+    "honkai_impact_3rd": {
+      "names": ["崩坏3", "Honkai Impact 3rd"],
+      "aliases": ["崩坏三", "崩3", "hi3"]
+    },
+    "naraka_bladepoint": {
+      "names": ["永劫无间", "Naraka: Bladepoint"],
+      "aliases": ["naraka", "永劫"]
+    },
+    "black_myth_wukong": {
+      "names": ["黑神话：悟空", "Black Myth: Wukong"],
+      "aliases": ["黑神话", "黑猴"]
+    },
+    "delta_force": {
+      "names": ["三角洲行动", "Delta Force"],
+      "aliases": ["三角洲"]
+    },
+    "apex_legends": {
+      "names": ["Apex英雄", "Apex Legends"],
+      "aliases": ["apex"]
+    },
+    "valorant": {
+      "names": ["无畏契约", "VALORANT"],
+      "aliases": ["瓦罗兰特"]
+    },
+    "league_of_legends": {
+      "names": ["英雄联盟", "League of Legends"],
+      "aliases": ["lol", "撸啊撸"]
+    },
+    "counter_strike_2": {
+      "names": ["反恐精英2", "Counter-Strike 2"],
+      "aliases": ["cs2"]
+    },
+    "elden_ring": {
+      "names": ["艾尔登法环", "ELDEN RING"],
+      "aliases": ["老头环"]
+    },
+    "cyberpunk_2077": {
+      "names": ["赛博朋克2077", "Cyberpunk 2077"],
+      "aliases": ["赛博朋克", "2077"]
+    },
+    "the_witcher_3": {
+      "names": ["巫师3：狂猎", "The Witcher 3: Wild Hunt"],
+      "aliases": ["巫师3", "witcher3", "猎魔人3"]
+    },
+    "grand_theft_auto_v": {
+      "names": ["侠盗猎车手5", "Grand Theft Auto V"],
+      "aliases": ["侠盗猎车手V", "GTA5", "gta v", "给他爱5", "三男一狗"]
+    },
+    "red_dead_redemption_2": {
+      "names": ["荒野大镖客2", "Red Dead Redemption 2"],
+      "aliases": ["大镖客2", "大表哥2", "rdr2"]
+    },
+    "minecraft": {
+      "names": ["我的世界", "Minecraft"],
+      "aliases": ["mc", "麦块"]
+    },
+    "terraria": {
+      "names": ["泰拉瑞亚", "Terraria"],
+      "aliases": []
+    },
+    "stardew_valley": {
+      "names": ["星露谷物语", "Stardew Valley"],
+      "aliases": ["星露谷"]
+    },
+    "the_elder_scrolls_v_skyrim": {
+      "names": ["上古卷轴5：天际", "The Elder Scrolls V: Skyrim"],
+      "aliases": ["上古卷轴5", "老滚5", "skyrim", "天际"]
+    },
+    "fallout_4": {
+      "names": ["辐射4", "Fallout 4"],
+      "aliases": ["fallout4"]
+    },
+    "monster_hunter_world": {
+      "names": ["怪物猎人：世界", "Monster Hunter: World"],
+      "aliases": ["怪猎世界", "猛汉世界", "mhw"]
+    },
+    "sekiro": {
+      "names": ["只狼：影逝二度", "Sekiro: Shadows Die Twice"],
+      "aliases": ["只狼"]
+    },
+    "dark_souls_iii": {
+      "names": ["黑暗之魂3", "Dark Souls III"],
+      "aliases": ["黑魂3", "ds3"]
+    },
+    "resident_evil_4": {
+      "names": ["生化危机4", "Resident Evil 4"],
+      "aliases": ["恶灵古堡4", "re4"]
+    },
+    "assassins_creed_valhalla": {
+      "names": ["刺客信条：英灵殿", "Assassin's Creed Valhalla"],
+      "aliases": ["英灵殿", "acv"]
+    },
+    "destiny_2": {
+      "names": ["命运2", "Destiny 2"],
+      "aliases": ["destiny2"]
+    },
+    "forza_horizon_5": {
+      "names": ["极限竞速：地平线5", "Forza Horizon 5"],
+      "aliases": ["地平线5", "fh5"]
+    },
+    "hollow_knight": {
+      "names": ["空洞骑士", "Hollow Knight"],
+      "aliases": ["空洞"]
+    },
+    "it_takes_two": {
+      "names": ["双人成行", "It Takes Two"],
+      "aliases": []
+    },
+    "cities_skylines": {
+      "names": ["城市：天际线", "Cities: Skylines"],
+      "aliases": ["天际线"]
+    },
+    "dyson_sphere_program": {
+      "names": ["戴森球计划", "Dyson Sphere Program"],
+      "aliases": ["戴森球"]
+    }
+  }
+}

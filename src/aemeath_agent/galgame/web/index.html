@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>爱弥斯 · 心动模式</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- 背景层：本地静态背景图兜底 + 动态 CG 交叉淡入 + 缓慢 Ken Burns 运镜 -->
+<div class="cg-layer" id="cgLayer">
+  <div class="cg-static"></div>
+  <div class="cg-vignette"></div>
+  <div class="cg-scrim"></div>
+</div>
+
+<!-- 顶部栏 -->
+<header class="topbar">
+  <button class="back-btn" id="backBtn" title="返回主控制台">
+    <span class="back-arrow">←</span><span>返回控制台</span>
+    <span class="conn-dot" id="connDot" title="后端连接状态"></span>
+  </button>
+
+  <div class="chapter-pill">
+    <span id="chapterTitle">序章</span>
+    <span class="chapter-dot">·</span>
+    <span id="chapterSubtitle">夜晚</span>
+    <span class="turn-dots" id="turnDots"></span>
+  </div>
+
+  <div class="world-hud" id="worldHud">
+    <!-- 与主控制台同源的终端角标：SYS ONLINE + 在线状态灯 -->
+    <span class="sys-chip" title="系统在线（与控制台同源）">
+      <i class="sys-dot"></i>SYS ONLINE
+    </span>
+    <span class="world-clock" id="worldClock">--:--</span>
+    <span class="world-meta" id="worldMeta">正在感知现实世界…</span>
+  </div>
+
+  <div class="affinity" id="affinityBox">
+    <span class="heart-main">♥</span>
+    <div class="affinity-track">
+      <div class="affinity-fill" id="affinityFill"></div>
+    </div>
+    <span class="affinity-num" id="affinityNum">20</span>
+    <span class="affinity-level" id="affinityLevel">初识</span>
+    <span class="hl-chip" id="hlChip" hidden>心链 0/5</span>
+  </div>
+</header>
+
+<!-- 事件横幅 -->
+<div class="event-banner" id="eventBanner">
+  <span class="event-emoji" id="eventEmoji">🍜</span>
+  <div class="event-text">
+    <div class="event-kicker">
+      <span id="eventTier">事件</span>
+      <span class="r16-tag" id="eventR16" hidden>R16</span>
+    </div>
+    <div class="event-title" id="eventTitle">食堂</div>
+  </div>
+</div>
+
+<!-- 对话流 -->
+<main class="chat" id="chat">
+  <div class="chat-inner" id="chatInner"></div>
+</main>
+
+<!-- 回忆录入口：贴右边缘的竖向手柄 -->
+<button class="log-handle" id="logBtn" title="回忆录">
+  <span class="log-handle-icon">❖</span>
+  <span class="log-handle-text">回忆录</span>
+  <span class="log-handle-badge" id="logBadge" hidden>0</span>
+</button>
+
+<!-- 回忆录 & 信箱抽屉 -->
+<aside class="memory-drawer" id="memoryDrawer">
+  <header class="drawer-head">
+    <div>
+      <div class="drawer-kicker">MEMORY LOG</div>
+      <h2 class="drawer-title">她记得的事</h2>
+    </div>
+    <button class="drawer-close" id="drawerClose" title="收起">×</button>
+  </header>
+
+  <div class="drawer-tabs">
+    <button class="drawer-tab on" id="tabRecall" data-tab="recall">
+      回忆 <em id="recallCount">0</em>
+    </button>
+    <button class="drawer-tab" id="tabNotes" data-tab="notes">
+      信箱 <em id="notesCount">0</em>
+    </button>
+    <button class="drawer-tab" id="tabPast" data-tab="past">
+      往期 <em id="pastCount">0</em>
+    </button>
+  </div>
+
+  <div class="drawer-filters" id="drawerFilters">
+    <input class="drawer-search" id="drawerSearch" type="search"
+           placeholder="搜索回忆里的词…" autocomplete="off"/>
+    <div class="filter-row">
+      <button class="filter-pill on" data-kind="all">全部</button>
+      <button class="filter-pill" data-kind="promise">约定</button>
+      <button class="filter-pill" data-kind="event">经历</button>
+      <button class="filter-pill" data-kind="plot">回忆</button>
+      <button class="filter-pill" data-kind="star">收藏</button>
+    </div>
+  </div>
+
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+<div class="drawer-scrim" id="drawerScrim"></div>
+
+<!-- 快捷选项 + 输入区 -->
+<footer class="composer">
+  <div class="choices" id="choices"></div>
+  <div class="input-row">
+    <textarea id="input" rows="1" placeholder="对爱弥斯说点什么……（Enter 发送）"></textarea>
+    <button id="sendBtn" title="发送">发送</button>
+  </div>
+</footer>
+
+<!-- 正在输入 -->
+<div class="typing" id="typing" hidden>
+  <span></span><span></span><span></span>
+  <em>爱弥斯正在回应<em class="typing-sec" id="typingSec"></em></em>
+</div>
+
+<!-- 结局覆盖层 -->
+<div class="ending-overlay" id="endingOverlay" hidden>
+  <div class="ending-card">
+    <div class="ending-kicker" id="endingKicker">Finale</div>
+    <h1 class="ending-title" id="endingTitle"></h1>
+    <p class="ending-epilogue" id="endingEpilogue"></p>
+    <div class="ending-actions">
+      <button class="btn-primary" id="continueBtn">继续陪着她</button>
+      <button class="btn-ghost" id="restartBtn">重新开始（归档本局）</button>
+      <button class="btn-ghost" id="endingBackBtn">返回控制台</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

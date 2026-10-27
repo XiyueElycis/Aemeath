@@ -13,12 +13,12 @@ from typing import Any, Dict, List
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentResult, AgentTask, BaseAgent
-from gamedoctor.governance.coordinator import GovernanceCoordinator
-from gamedoctor.orchestrator.orchestrator import GameAgentOrchestrator
-from gamedoctor.sandbox.context import AccessContext
-from gamedoctor.sandbox.gate import ApprovalGate, get_gate, reset_gate
-from gamedoctor.runtime import get_tracker
+from aemeath_agent.agents.base_agent import AgentResult, AgentTask, BaseAgent
+from aemeath_agent.governance.coordinator import GovernanceCoordinator
+from aemeath_agent.orchestrator.orchestrator import GameAgentOrchestrator
+from aemeath_agent.sandbox.context import AccessContext
+from aemeath_agent.sandbox.gate import ApprovalGate, get_gate, reset_gate
+from aemeath_agent.runtime import get_tracker
 
 # 复用治理层测试桩
 from tests.test_governance import (  # noqa: E402
@@ -60,8 +60,8 @@ class RecordingAgent(BaseAgent):
 @pytest.fixture
 def env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     apphome = tmp_path / "apphome"
-    monkeypatch.setattr("gamedoctor.sandbox.session.app_dir", lambda: apphome)
-    monkeypatch.setattr("gamedoctor.governance.coordinator.app_dir", apphome)
+    monkeypatch.setattr("aemeath_agent.sandbox.session.app_dir", lambda: apphome)
+    monkeypatch.setattr("aemeath_agent.governance.coordinator.app_dir", apphome)
     reset_gate()
     get_tracker()._events.clear()
 
@@ -143,7 +143,7 @@ def test_sandbox_workflow_rejected_skips_all(env) -> None:
 
 def test_sandbox_timeout_rejects_when_idle(env, monkeypatch: pytest.MonkeyPatch) -> None:
     short_gate = ApprovalGate(ttl=0.05)
-    monkeypatch.setattr("gamedoctor.sandbox.gate.get_gate", lambda: short_gate)
+    monkeypatch.setattr("aemeath_agent.sandbox.gate.get_gate", lambda: short_gate)
     client = FakeClient(plan_texts=[_GOOD_PLAN])
 
     async def case():
@@ -236,7 +236,7 @@ def test_classify_kinds() -> None:
 def test_chat_request_validation() -> None:
     from fastapi.testclient import TestClient
 
-    from gamedoctor.server import ChatRequest, app
+    from aemeath_agent.server import ChatRequest, app
 
     assert ChatRequest(message="x").access_mode == "sandbox"
 

@@ -5,13 +5,13 @@ from __future__ import annotations
 import asyncio
 import json
 
-from gamedoctor.agents.audio.audio_expert_agent import AudioExpertAgent
-from gamedoctor.agents.base_agent import AgentResult, AgentTask
-from gamedoctor.agents.community.community_agent import CommunityAgent
-from gamedoctor.agents.network.network_expert_agent import NetworkExpertAgent
-from gamedoctor.agents.social.social_agent import SocialAgent
-from gamedoctor.governance.coordinator import _workflow_summary_json
-from gamedoctor.governance.reviewer import Reviewer
+from aemeath_agent.agents.audio.audio_expert_agent import AudioExpertAgent
+from aemeath_agent.agents.base_agent import AgentResult, AgentTask
+from aemeath_agent.agents.community.community_agent import CommunityAgent
+from aemeath_agent.agents.network.network_expert_agent import NetworkExpertAgent
+from aemeath_agent.agents.social.social_agent import SocialAgent
+from aemeath_agent.governance.coordinator import _workflow_summary_json
+from aemeath_agent.governance.reviewer import Reviewer
 
 
 def _run(agent, data=None):

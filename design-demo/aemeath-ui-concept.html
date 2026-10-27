@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEMEATH · UI CONCEPT PREVIEW v2</title>
+<style>
+/* ============================================================
+   AEMEATH Design Tokens —— 明亮未来生物科技终端
+   暖白=环境 / 青蓝=科技 / 粉=AI品牌 / 藏青=结构 / 金=高级装饰
+   ============================================================ */
+:root{
+  --bg:#F7F5EF; --bg2:#F3F1EA; --bg3:#ECEBE5;
+  --cyan:#59CFE0; --cyan-deep:#45BFD2; --cyan-soft:#E3F6F9;
+  --pink:#F28FB6; --pink-deep:#E97FA9; --pink-soft:#FCE9F1;
+  --navy:#263B62; --navy-2:#304873; --navy-soft:#E8ECF3;
+  --gold:#CDBB8E; --gold-deep:#BCA878; --gold-soft:#F6F1E3;
+  --gray:#7F8A94; --gray-2:#A7AFB7; --gray-3:#D8DCE0;
+  --line:#DDE0DA;
+  --r-sm:5px; --r-md:8px; --r-lg:12px;
+  --shadow-soft:0 2px 10px rgba(38,59,98,.06);
+  --shadow-pop:0 8px 28px rgba(38,59,98,.10);
+  --font-ui:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+  --font-mono:"Cascadia Code","Consolas","SF Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#E9E7DF;font-family:var(--font-ui);color:var(--navy);padding:40px 0 80px}
+.page{width:1360px;margin:0 auto}
+.doc-head{margin-bottom:28px}
+.doc-head h1{font-size:22px;letter-spacing:4px;font-weight:700}
+.doc-head p{color:var(--gray);font-size:13px;margin-top:6px;letter-spacing:1px}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:11px;letter-spacing:2px;
+  color:var(--cyan-deep);border:1px solid var(--cyan);background:var(--cyan-soft);
+  padding:2px 10px;border-radius:100px;margin-right:8px}
+
+.stage-label{display:flex;align-items:center;gap:10px;margin:36px 0 14px}
+.stage-label b{font-size:15px;letter-spacing:3px}
+.stage-label span{font-family:var(--font-mono);font-size:11px;color:var(--gray)}
+.stage-label::after{content:"";flex:1;height:1px;background:var(--gray-3)}
+
+.window{border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-pop);
+  border:1px solid var(--gray-3);background:var(--bg)}
+.titlebar{height:38px;background:var(--bg2);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;padding:0 14px;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#F0A68F}.dot.y{background:#EAD7A0}.dot.g{background:#A8D5BA}
+.titlebar .t{margin-left:10px;font-size:12px;color:var(--gray);font-family:var(--font-mono)}
+
+/* ============================================================
+   主界面 · OS 布局
+   ============================================================ */
+.app{display:grid;grid-template-rows:64px 1fr 30px;height:760px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.45)}
+.brand{display:flex;align-items:center;gap:12px}
+.ava{width:40px;height:40px;border-radius:50%;position:relative;
+  background:conic-gradient(from 0deg,var(--cyan),var(--cyan-deep),var(--cyan));padding:2px}
+.ava::before{content:"";position:absolute;inset:-4px;border-radius:50%;
+  border:1px dashed var(--gold);opacity:.8}
+.ava img{width:100%;height:100%;border-radius:50%;object-fit:cover;
+  border:2px solid #fff;background:#fff}
+.brand b{font-size:15px;letter-spacing:3px}
+.brand small{display:block;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:2px;color:var(--gray);margin-top:2px}
+.hud{display:flex;gap:22px;font-family:var(--font-mono);font-size:11px}
+.hud i{font-style:normal;color:var(--gray-2);letter-spacing:1px;margin-right:6px}
+.hud b{font-weight:600;font-size:13px}
+.h-cyan b{color:var(--cyan-deep)} .h-navy b{color:var(--navy)}
+.h-pink b{color:var(--pink-deep)} .h-gold b{color:var(--gold-deep)}
+
+.body{display:grid;grid-template-columns:224px 1fr;overflow:hidden}
+
+/* ---- 左侧导航（保持不变） ---- */
+.side{background:var(--bg2);border-right:1px solid var(--line);
+  padding:18px 0;display:flex;flex-direction:column}
+.nav-group{padding:14px 20px 6px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:3px;color:var(--gray-2)}
+.nav{display:flex;align-items:center;gap:11px;padding:9px 20px;position:relative;
+  font-size:13px;color:var(--navy-2);cursor:pointer}
+.nav svg{width:15px;height:15px;stroke:var(--gray);fill:none;stroke-width:1.6}
+.nav.on{background:var(--cyan-soft);color:var(--navy);font-weight:600}
+.nav.on::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;
+  background:var(--cyan-deep);border-radius:2px}
+.nav.on svg{stroke:var(--cyan-deep)}
+.nav .pin{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--pink)}
+.side-foot{margin-top:auto;padding:16px 20px 4px;border-top:1px solid var(--line)}
+.lamp{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cyan-deep);
+  box-shadow:0 0 0 3px rgba(89,207,224,.18);margin-right:7px}
+.side-foot .ln{font-family:var(--font-mono);font-size:11px;color:var(--navy)}
+.side-foot p{font-size:11px;color:var(--gray);margin-top:6px}
+
+/* ---- 主内容：编号条 + 三列 OS GRID ---- */
+.main{padding:16px 20px 18px;display:flex;flex-direction:column;gap:13px;min-height:0}
+.optop{display:flex;align-items:center;gap:0;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:2px;color:var(--gray)}
+.optop b{color:var(--navy-2);font-weight:600}
+.optop .sep{margin:0 12px;color:var(--gray-3)}
+.optop .bar{display:inline-block;width:16px;height:2px;background:var(--cyan);
+  margin-right:8px;vertical-align:2px}
+.optop .r{margin-left:auto;color:var(--gold-deep)}
+
+.osgrid{flex:1;display:grid;grid-template-columns:250px 1fr 248px;gap:14px;min-height:0}
+.col{display:flex;flex-direction:column;gap:13px;min-height:0;min-width:0}
+
+/* 精密面板 */
+.panel{background:rgba(255,255,255,.74);border:1px solid var(--line);
+  border-radius:var(--r-sm);box-shadow:var(--shadow-soft);position:relative}
+.panel-h{display:flex;align-items:center;gap:9px;padding:9px 14px;
+  border-bottom:1px solid var(--line)}
+.panel-h b{font-family:var(--font-mono);font-size:10px;letter-spacing:2.5px;color:var(--navy)}
+.panel-h .deco{width:14px;height:2px;background:var(--cyan);border-radius:2px}
+.panel-h .id{margin-left:auto;font-family:var(--font-mono);font-size:9px;color:var(--gray-2)}
+.chamfer{position:absolute;width:8px;height:8px}
+.chamfer.tl{top:-1px;left:-1px;border-top:1.5px solid var(--gold);border-left:1.5px solid var(--gold)}
+.chamfer.br{bottom:-1px;right:-1px;border-bottom:1.5px solid var(--gold);border-right:1.5px solid var(--gold)}
+
+/* ============ 左列：AI 角色身份模块 ============ */
+.idcard{padding:16px 15px 14px;text-align:center}
+.idava{width:80px;height:80px;margin:2px auto 10px;position:relative;border-radius:50%;
+  background:conic-gradient(from 40deg,var(--cyan),var(--cyan-deep),var(--cyan));padding:2.5px}
+.idava::before{content:"";position:absolute;inset:-7px;border-radius:50%;
+  border:1px dashed var(--gold)}
+.idava::after{content:"";position:absolute;inset:-12px;border-radius:50%;
+  border:1px solid var(--cyan);opacity:.45}
+.idava img{width:100%;height:100%;border-radius:50%;border:2px solid #fff;object-fit:cover}
+.idcard h3{font-size:15px;letter-spacing:4px}
+.idcard .sub{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--gray);margin-top:5px}
+
+.kv{margin-top:12px;text-align:left}
+.kv .r{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;
+  padding:5px 0;border-bottom:1px dashed var(--gray-3)}
+.kv .r:last-child{border-bottom:none}
+.kv .k{color:var(--gray);letter-spacing:1.5px}
+.kv .v{color:var(--navy);font-weight:600}
+.kv .v.pk{color:var(--pink-deep)}
+
+/* 生命数据：BIO STATUS / NEURAL LINK */
+.biosect{margin-top:12px;text-align:left;border-top:1px solid var(--line);padding-top:10px}
+.bs-h{font-family:var(--font-mono);font-size:9px;letter-spacing:2.5px;color:var(--cyan-deep);
+  display:flex;align-items:center;gap:7px;margin-bottom:2px}
+.bs-h::after{content:"";flex:1;height:1px;background:var(--cyan);opacity:.4}
+.bs-row{display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--font-mono);font-size:10px;padding:4px 0}
+.bs-row .k{color:var(--gray)}
+.bs-row .v{color:var(--navy);font-weight:600}
+.bs-row .v.cy{color:var(--cyan-deep)}
+.bs-row .v.pk{color:var(--pink-deep)}
+
+.labtags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.labtag{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--navy-2);
+  border:1px solid var(--gray-3);background:var(--bg2);padding:3px 8px;border-radius:3px}
+.labtag.cy{color:var(--cyan-deep);border-color:var(--cyan);background:var(--cyan-soft)}
+.idstate{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:2px}
+
+/* ============ 中列：AI Core 生命装置 ============ */
+.corestage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;min-height:0}
+.corestage .bgc{position:absolute;inset:0;opacity:.5}
+.corewrap{position:relative;width:348px;height:348px}
+.corewrap svg{position:absolute;inset:0;overflow:visible}
+
+/* 抽象 Neural Core 能量球（主视觉，头像弱化） */
+.neural-orb{position:absolute;left:50%;top:50%;width:92px;height:92px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 38% 32%,#ffffff 0%,#FBD3E4 26%,#F28FB6 60%,#E97FA9 100%);
+  box-shadow:0 0 30px rgba(242,143,182,.5),0 0 60px rgba(242,143,182,.22),
+             inset 0 0 14px rgba(255,255,255,.7)}
+.neural-orb::before{content:"";position:absolute;inset:11px;border-radius:50%;
+  border:1px solid rgba(89,207,224,.85)}
+.neural-orb::after{content:"";position:absolute;inset:26px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,0))}
+/* 弱化的意识锚点小头像（核心下方） */
+.orb-ava{position:absolute;width:42px;height:42px;border-radius:50%;padding:1.5px;
+  left:calc(50% - 21px);top:calc(50% + 58px);background:var(--cyan);
+  box-shadow:0 2px 10px rgba(38,59,98,.22)}
+.orb-ava img{width:100%;height:100%;border-radius:50%;border:1.5px solid #fff;object-fit:cover}
+
+/* 轨道节点标签（细线连入环体） */
+.node-tag{position:absolute;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;
+  color:var(--navy-2);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.node-tag i{width:6px;height:6px;border-radius:50%;background:var(--pink);
+  box-shadow:0 0 6px var(--pink)}
+.node-tag.cy i{background:var(--cyan-deep);box-shadow:0 0 6px var(--cyan)}
+.node-tag.gd i{background:var(--gold-deep);box-shadow:0 0 6px var(--gold-deep)}
+.node-tag em{font-style:normal;color:var(--gray);font-size:8px;margin-left:2px}
+.nt1{top:8px;left:50%;transform:translateX(-50%)}
+.nt2{bottom:72px;right:-10px}
+.nt3{bottom:72px;left:-10px;flex-direction:row-reverse}
+
+/* 四角数据编号 */
+.corner-data{position:absolute;font-family:var(--font-mono);font-size:9px;
+  letter-spacing:1.5px;color:var(--gray);line-height:1.8}
+.corner-data b{color:var(--navy-2)}
+.cd-tl{top:12px;left:14px}
+.cd-tr{top:12px;right:14px;text-align:right}
+.cd-bl{bottom:12px;left:14px}
+.cd-br{bottom:12px;right:14px;text-align:right}
+.corescan{position:absolute;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.5}
+
+/* ============ CORE CONFIGURATION（紧凑底部状态模块） ============ */
+.speccfg{flex:none}
+.cfg-body{padding:9px 14px 10px}
+.cfg-flow{display:flex;flex-wrap:wrap;gap:7px 18px;align-items:center}
+.cfg-seg{display:flex;align-items:center;gap:8px;min-width:0}
+.cfg-seg>.lb{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;color:var(--gray)}
+/* 分段控制 */
+.seg{display:inline-flex;border:1px solid var(--gray-3);border-radius:2px;
+  overflow:hidden;background:#fff;height:24px}
+.seg-btn{display:inline-flex;align-items:center;padding:0 9px;font-family:var(--font-mono);
+  font-size:9px;letter-spacing:1px;color:var(--gray);cursor:pointer;border-right:1px solid var(--gray-3)}
+.seg-btn:last-child{border-right:none}
+.seg-btn:hover{color:var(--navy)}
+.seg-btn.on{background:var(--cyan-soft);color:var(--cyan-deep);font-weight:700;
+  box-shadow:inset 0 -1.5px 0 var(--cyan-deep)}
+.seg-btn.pk.on{background:var(--pink-soft);color:var(--pink-deep);
+  box-shadow:inset 0 -1.5px 0 var(--pink-deep)}
+/* 路径 / 模型只读框 */
+.cfg-in{height:24px;border:1px solid var(--gray-3);background:#fff;border-radius:2px;
+  display:flex;align-items:center;padding:0 9px;font-family:var(--font-mono);
+  font-size:9px;color:var(--navy);white-space:nowrap}
+.cfg-sel{cursor:pointer}
+.cfg-sel::after{content:"";margin-left:8px;width:0;height:0;
+  border-left:3.5px solid transparent;border-right:3.5px solid transparent;border-top:4px solid var(--gray)}
+.ctrl-sm{height:24px;padding:0 9px;font-size:9px}
+.snd-btn{width:24px;height:24px;border:1px solid var(--gray-3);border-radius:2px;background:#fff;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.snd-btn svg{width:11px;height:11px;stroke:var(--pink-deep);fill:none;stroke-width:1.6}
+.snd-btn.off svg{stroke:var(--gray-2)}
+
+/* ============ 右列：研究节点 + 数据日志 ============ */
+.nodes .nr{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line)}
+.nodes .nr:last-child{border-bottom:none}
+.nodes .code{font-family:var(--font-mono);font-size:9px;color:var(--gray);width:34px}
+.nodes .nm{font-size:11px;color:var(--navy);flex:1}
+.nodes .st2{font-family:var(--font-mono);font-size:9px;letter-spacing:1px}
+.nodes .led{width:6px;height:6px;border-radius:50%}
+.led-c{background:var(--cyan-deep);box-shadow:0 0 5px rgba(69,191,210,.8)}
+.led-p{background:var(--pink);box-shadow:0 0 5px rgba(242,143,182,.8)}
+.led-g{background:var(--gold-deep);box-shadow:0 0 5px rgba(188,168,120,.9)}
+.led-x{background:var(--gray-2)}
+.st-c{color:var(--cyan-deep)}.st-p{color:var(--pink-deep)}.st-g{color:var(--gold-deep)}.st-x{color:var(--gray)}
+
+.datalog{padding:13px 14px}
+.metric-row{display:flex;justify-content:space-between;font-family:var(--font-mono);
+  font-size:10px;padding:4px 0}
+.metric-row .k{color:var(--gray)}
+.metric-row .v{color:var(--navy);font-weight:600}
+.wave{margin-top:8px;width:100%;height:34px}
+.secstat .sr{display:flex;align-items:center;gap:9px;padding:7px 14px;border-bottom:1px solid var(--line)}
+.secstat .sr:last-child{border-bottom:none}
+.secstat .k{font-family:var(--font-mono);font-size:9px;letter-spacing:1.2px;color:var(--gray);flex:1}
+.secstat .v{font-family:var(--font-mono);font-size:9px;color:var(--navy);font-weight:700;letter-spacing:1px}
+
+/* ============================================================
+   科研终端控制按钮（通用）
+   ============================================================ */
+.ctrl{position:relative;display:inline-flex;align-items:center;gap:8px;height:34px;
+  padding:0 13px;border:1px solid var(--gray-3);background:rgba(255,255,255,.72);
+  color:var(--navy-2);font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;
+  cursor:pointer;text-transform:uppercase;border-radius:2px}
+.ctrl::before{content:"";position:absolute;top:-1px;left:-1px;width:7px;height:7px;
+  border-top:1.5px solid var(--cyan-deep);border-left:1.5px solid var(--cyan-deep)}
+.ctrl::after{content:"";position:absolute;bottom:-1px;right:-1px;width:7px;height:7px;
+  border-bottom:1.5px solid var(--gold);border-right:1.5px solid var(--gold)}
+.ctrl:hover{border-color:var(--cyan);color:var(--navy);background:var(--cyan-soft);
+  box-shadow:0 0 0 1px rgba(89,207,224,.25),0 0 14px rgba(89,207,224,.28)}
+.ctrl .cled{width:5px;height:5px;border-radius:50%;background:var(--cyan-deep);
+  box-shadow:0 0 5px var(--cyan-deep)}
+.ctrl-go{height:38px;padding:0 22px;border:1px solid #3DB3C6;
+  background:linear-gradient(180deg,#6fdce9,#45BFD2);color:#fff;font-weight:600;
+  box-shadow:0 4px 12px rgba(69,191,210,.32)}
+.ctrl-go::before{border-top-color:#fff;border-left-color:#fff}
+.ctrl-go::after{border-bottom-color:rgba(255,255,255,.75);border-right-color:rgba(255,255,255,.75)}
+.ctrl-go:hover{background:linear-gradient(180deg,#7ee4f0,#4fc8da);color:#fff;
+  box-shadow:0 4px 16px rgba(69,191,210,.5),0 0 0 1px rgba(89,207,224,.4)}
+.ctrl-ai{border-color:#E3A3BD}
+.ctrl-ai .cled{background:var(--pink);box-shadow:0 0 5px var(--pink)}
+.ctrl-ai:hover{border-color:var(--pink);background:var(--pink-soft);
+  box-shadow:0 0 0 1px rgba(242,143,182,.25),0 0 14px rgba(242,143,182,.25)}
+
+/* 底部状态条 */
+.statusbar{background:var(--bg2);border-top:1px solid var(--line);display:flex;
+  align-items:center;padding:0 18px;gap:18px;font-family:var(--font-mono);font-size:10px;color:var(--gray)}
+.statusbar b{color:var(--navy-2);font-weight:600}
+.statusbar .r{margin-left:auto}
+
+/* ============================================================
+   启动动画首帧（保持 v1）
+   ============================================================ */
+.boot{height:720px;position:relative;overflow:hidden;background:var(--bg)}
+.boot-bg{position:absolute;inset:0;opacity:.5}
+.boot-frame{position:absolute;inset:22px;border:1px solid var(--gold);pointer-events:none}
+.boot-frame::before,.boot-frame::after{content:"";position:absolute;width:14px;height:14px}
+.boot-frame::before{top:-1px;left:-1px;border-top:2px solid var(--gold-deep);border-left:2px solid var(--gold-deep)}
+.boot-frame::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--gold-deep);border-right:2px solid var(--gold-deep)}
+.boot-top{position:absolute;top:40px;left:48px;right:48px;display:flex;justify-content:space-between;
+  font-family:var(--font-mono);font-size:11px}
+.boot-top b{letter-spacing:3px;font-size:13px}
+.boot-top small{display:block;color:var(--gray);letter-spacing:2px;margin-top:3px}
+.boot-hud{text-align:right;line-height:1.9;color:var(--gray)}
+.boot-hud b{color:var(--cyan-deep)}
+.boot-core{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);
+  width:260px;height:260px}
+.ring{position:absolute;inset:0;border-radius:50%}
+.ring-1{border:1px solid var(--cyan);border-top-color:var(--cyan-deep)}
+.ring-2{inset:22px;border:1px dashed var(--cyan);opacity:.7}
+.ring-3{inset:48px;border:1px solid var(--gold)}
+.core-dot{position:absolute;inset:78px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--pink) 55%,var(--pink-deep));
+  box-shadow:0 0 30px rgba(242,143,182,.55)}
+.boot-brand{position:absolute;top:calc(46% + 158px);left:0;right:0;text-align:center}
+.boot-brand b{font-size:22px;letter-spacing:10px}
+.boot-brand small{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:4px;color:var(--gray);margin-top:8px}
+.boot-init{position:absolute;bottom:56px;left:48px;font-family:var(--font-mono);
+  font-size:11px;line-height:2;color:var(--navy-2)}
+.boot-init .dots{color:var(--gray-2);letter-spacing:2px}
+.boot-init .ok{color:var(--cyan-deep)}
+.boot-init .gd{color:var(--gold-deep)}
+.boot-foot-l,.boot-foot-r{position:absolute;bottom:40px;font-family:var(--font-mono);font-size:10px;color:var(--gray)}
+.boot-foot-l{left:48px}.boot-foot-r{right:48px}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinR{to{transform:rotate(-360deg)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.07);opacity:1}}
+@keyframes scan{0%{top:6%}100%{top:94%}}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes orbBreathe{0%,100%{transform:translate(-50%,-50%) scale(1)}
+  50%{transform:translate(-50%,-50%) scale(1.055)}}
+@keyframes ledBlink{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes avPulse{0%,100%{box-shadow:0 2px 10px rgba(38,59,98,.22)}
+  50%{box-shadow:0 2px 14px rgba(89,207,224,.6)}}
+
+.ring-1{animation:spin 9s linear infinite}
+.ring-2{animation:spinR 18s linear infinite}
+.ring-3{animation:spin 26s linear infinite}
+.core-dot{animation:breathe 3.2s ease-in-out infinite}
+.corescan{animation:scan 4.5s ease-in-out infinite alternate}
+
+/* —— 主界面生命终端微动效 —— */
+.neural-orb{animation:orbBreathe 3.8s ease-in-out infinite}
+.orb-ava{animation:avPulse 3.8s ease-in-out infinite}
+.led-c{animation:ledBlink 2.6s ease-in-out infinite}
+.led-p{animation:ledBlink 3.3s ease-in-out infinite .6s}
+.led-g{animation:ledBlink 4.4s ease-in-out infinite 1.2s}
+.seg-btn,.snd-btn,.ctrl{transition:all .18s ease}
+@media (prefers-reduced-motion: reduce){
+  .neural-orb,.orb-ava,.led-c,.led-p,.led-g{animation:none}
+}
+
+/* ============================================================
+   色板 & 组件样本
+   ============================================================ */
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:8px}
+.sw{border:1px solid var(--gray-3);border-radius:var(--r-md);overflow:hidden;background:#fff}
+.sw .c{height:76px}
+.sw .i{padding:10px 12px}
+.sw b{font-size:12px;display:block}
+.sw small{font-family:var(--font-mono);font-size:10px;color:var(--gray)}
+.components{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:8px}
+.comp{border:1px solid var(--line);border-radius:var(--r-md);background:#fff;padding:18px}
+.comp h4{font-size:12px;letter-spacing:2px;color:var(--gray);margin-bottom:16px;font-family:var(--font-mono)}
+.txt-in{border:1px solid var(--cyan);border-radius:3px;height:36px;padding:0 12px;
+  width:100%;font-size:12px;outline:none;box-shadow:0 0 0 3px rgba(89,207,224,.15)}
+.lamprow{display:flex;gap:16px;font-family:var(--font-mono);font-size:11px;color:var(--gray);align-items:center}
+.note{margin-top:26px;font-size:12px;color:var(--gray);line-height:1.9}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-head">
+    <h1>AEMEATH · UI CONCEPT PREVIEW v4</h1>
+    <p>
+      <span class="tag">未来生物科技 AI 生命终端</span>
+      <span class="tag">WARM WHITE × CYAN × PINK × NAVY × GOLD</span><br><br>
+      v4 精修：Neural Core 能量球 · 生命数据 · CORE CONFIGURATION · SECURITY STATUS · 克制微动效
+    </p>
+  </div>
+
+  <!-- ================= 主界面 ================= -->
+  <div class="stage-label"><b>01 · 主界面 AEMEATH OS</b><span>16:9 · 中央 AI Core 视觉中心</span></div>
+  <div class="window">
+    <div class="titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="t">爱弥斯 · 智能体控制台</span>
+    </div>
+    <div class="app">
+      <div class="topbar">
+        <div class="brand">
+          <div class="ava"><img src="../desktop/AemeathAgent.Desktop/Assets/brand.png" alt="爱弥斯"></div>
+          <div><b>爱弥斯 AEMEATH</b><small>生物研究部门 · 星海轻歌</small></div>
+        </div>
+        <div class="hud">
+          <span class="h-navy"><i>温度</i><b>36.7°C</b></span>
+          <span class="h-cyan"><i>O₂</i><b>98.7%</b></span>
+          <span class="h-cyan"><i>网络</i><b>1.8 G/s</b></span>
+          <span class="h-gold"><i>安全</i><b>A-3</b></span>
+          <span class="h-pink"><i>核心</i><b>在线</b></span>
+        </div>
+      </div>
+
+      <div class="body">
+        <!-- 侧栏（保持不变） -->
+        <div class="side">
+          <div class="nav-group">系统</div>
+          <div class="nav on">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+            智能控制台
+          </div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.4-7 10-7 10z"/></svg>
+            角色交互
+          </div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><path d="M5 8l4 4-4 4M12 16h7"/></svg>
+            指令中枢
+          </div>
+          <div class="nav-group">智能体</div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
+            检测豹<span class="pin"></span>
+          </div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+            安装豹
+          </div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 10v9h14v-9"/><path d="M9 19v-5h6v5"/></svg>
+            管家豹
+          </div>
+          <div class="nav-group">模块</div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+            技能管理
+          </div>
+          <div class="nav">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+            MCP 管理
+          </div>
+          <div class="side-foot">
+            <div class="ln"><span class="lamp"></span>后端在线</div>
+            <p>已加载 12 个智能体 · 就绪</p>
+          </div>
+        </div>
+
+        <!-- 主内容 OS GRID -->
+        <div class="main">
+          <div class="optop">
+            <span class="bar"></span><b>会话</b>&nbsp;AEM-20261007-01
+            <span class="sep">|</span> 实验节点 上海-07
+            <span class="sep">|</span> 链路稳定
+            <span class="r">权限等级 A-3</span>
+          </div>
+
+          <div class="osgrid">
+            <!-- 左：身份模块 -->
+            <div class="col">
+              <div class="panel">
+                <span class="chamfer tl"></span><span class="chamfer br"></span>
+                <div class="panel-h"><span class="deco"></span><b>身份</b><span class="id">档案</span></div>
+                <div class="idcard">
+                  <div class="idava"><img src="../desktop/AemeathAgent.Desktop/Assets/brand.png"></div>
+                  <h3>爱弥斯</h3>
+                  <div class="sub">AEMEATH · 生物型智能终端</div>
+                  <div class="kv">
+                    <div class="r"><span class="k">单元编号</span><span class="v">AEM-001</span></div>
+                    <div class="r"><span class="k">上下文</span><span class="v">128K</span></div>
+                    <div class="r"><span class="k">所属部门</span><span class="v">拉贝尔学部</span></div>
+                  </div>
+                  <div class="biosect">
+                    <div class="bs-h">生命状态</div>
+                    <div class="bs-row"><span class="k">生命节律</span><span class="v pk" id="bsPulse">72 次/分</span></div>
+                    <div class="bs-row"><span class="k">细胞同步</span><span class="v cy" id="bsCell">98.4%</span></div>
+                    <div class="bs-h" style="margin-top:8px">神经链路</div>
+                    <div class="bs-row"><span class="k">链路带宽</span><span class="v" id="bsBw">1.80 G/s</span></div>
+                    <div class="bs-row"><span class="k">神经延迟</span><span class="v cy">12 ms</span></div>
+                  </div>
+                  <div class="labtags">
+                    <span class="labtag cy">生物同步</span>
+                    <span class="labtag">实验链路</span>
+                    <span class="labtag">神经</span>
+                  </div>
+                  <div class="idstate"><span class="lamp"></span>单元在线</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 中：Core 装置 + 系统配置 -->
+            <div class="col">
+              <div class="panel corestage">
+                <span class="chamfer tl"></span><span class="chamfer br"></span>
+                <svg class="bgc" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice">
+                  <defs>
+                    <pattern id="grid2" width="30" height="30" patternUnits="userSpaceOnUse">
+                      <path d="M30 0H0v30" fill="none" stroke="#59CFE0" stroke-width=".35"/>
+                    </pattern>
+                  </defs>
+                  <rect width="600" height="360" fill="url(#grid2)"/>
+                </svg>
+
+                <div class="corner-data cd-tl">核心编号 <b>AEM-001</b><br>信号 <b>稳定</b></div>
+                <div class="corner-data cd-tr">同步率 <b>98.7%</b><br>上行速率 <b>1.8G/s</b></div>
+                <div class="corner-data cd-bl">生物链路 <b style="color:#E97FA9">活跃</b><br>脉冲 72 次/分</div>
+                <div class="corner-data cd-br">权限 <b style="color:#BCA878">A-3</b><br>运行时长 00:14:22</div>
+
+                <div class="corewrap">
+                  <svg viewBox="0 0 348 348">
+                    <circle cx="174" cy="174" r="162" fill="none" stroke="#59CFE0" stroke-width=".8" stroke-dasharray="2 6"/>
+                    <circle cx="174" cy="174" r="134" fill="none" stroke="#45BFD2" stroke-width="1.5"
+                            stroke-dasharray="620 222" transform="rotate(-90 174 174)"/>
+                    <circle cx="174" cy="174" r="134" fill="none" stroke="#59CFE0" stroke-width=".6" opacity=".55"/>
+                    <circle cx="174" cy="174" r="104" fill="none" stroke="#CDBB8E" stroke-width="1"/>
+                    <circle cx="174" cy="174" r="76" fill="none" stroke="#59CFE0" stroke-width=".8" stroke-dasharray="4 4" opacity=".7"/>
+                  </svg>
+                  <span class="node-tag nt1"><i></i>神经核心<em>92%</em></span>
+                  <span class="node-tag cy nt2"><i></i>生物链路<em>稳定</em></span>
+                  <span class="node-tag gd nt3"><i></i>同步状态<em>已锁定</em></span>
+                  <div class="neural-orb"></div>
+                  <div class="orb-ava"><img src="../desktop/AemeathAgent.Desktop/Assets/brand.png"></div>
+                </div>
+                <div class="corescan"></div>
+              </div>
+
+              <div class="panel speccfg">
+                <span class="chamfer tl"></span><span class="chamfer br"></span>
+                <div class="panel-h"><span class="deco"></span><b>核心配置</b>
+                  <span class="id">参数设置</span></div>
+                <div class="cfg-body">
+                  <div class="cfg-flow">
+                    <div class="cfg-seg">
+                      <span class="lb">资源路径</span>
+                      <span class="cfg-in">D:\Games</span>
+                      <button class="ctrl ctrl-sm">浏览</button>
+                    </div>
+                    <div class="cfg-seg">
+                      <span class="lb">神经模型</span>
+                      <span class="cfg-in cfg-sel">glm-4.5-air</span>
+                    </div>
+                    <div class="cfg-seg">
+                      <span class="lb">运行模式</span>
+                      <span class="seg">
+                        <span class="seg-btn on">编辑</span><span class="seg-btn">方案</span><span class="seg-btn">陪伴</span>
+                      </span>
+                    </div>
+                    <div class="cfg-seg">
+                      <span class="lb">安全访问</span>
+                      <span class="seg">
+                        <span class="seg-btn on">沙箱</span><span class="seg-btn">直接</span>
+                      </span>
+                    </div>
+                    <div class="cfg-seg">
+                      <span class="lb">启动协议</span>
+                      <span class="seg">
+                        <span class="seg-btn on">每次</span><span class="seg-btn">首次</span><span class="seg-btn">关闭</span>
+                      </span>
+                      <span class="snd-btn" title="启动音效">
+                        <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6"/></svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右：研究节点 + 数据 -->
+            <div class="col">
+              <div class="panel nodes">
+                <span class="chamfer tl"></span><span class="chamfer br"></span>
+                <div class="panel-h"><span class="deco"></span><b>研究节点</b><span class="id">04 运行中</span></div>
+                <div class="nr"><span class="code">N-01</span><span class="nm">神经核心</span><span class="led led-c"></span><span class="st2 st-c">同步 98%</span></div>
+                <div class="nr"><span class="code">N-02</span><span class="nm">记忆索引</span><span class="led led-p"></span><span class="st2 st-p">活跃</span></div>
+                <div class="nr"><span class="code">N-03</span><span class="nm">工具沙箱</span><span class="led led-g"></span><span class="st2 st-g">待命</span></div>
+                <div class="nr"><span class="code">N-04</span><span class="nm">数据链路</span><span class="led led-c"></span><span class="st2 st-c">在线</span></div>
+              </div>
+
+              <div class="panel">
+                <span class="chamfer tl"></span><span class="chamfer br"></span>
+                <div class="panel-h"><span class="deco"></span><b>数据日志</b><span class="id">实时</span></div>
+                <div class="datalog">
+                  <div class="metric-row"><span class="k">上行</span><span class="v" id="dlTx">1.82 G/s</span></div>
+                  <div class="metric-row"><span class="k">下行</span><span class="v" id="dlRx">4.36 G/s</span></div>
+                  <div class="metric-row"><span class="k">脉冲</span><span class="v" id="dlPulse" style="color:#E97FA9">72 次/分</span></div>
+                  <svg class="wave" viewBox="0 0 200 34" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#45BFD2" stroke-width="1.2"
+                      points="0,22 14,22 20,8 26,30 34,16 48,16 56,6 64,28 78,18 92,18 100,10 108,26 124,14 138,14 146,4 154,30 170,20 200,20"/>
+                    <polyline fill="none" stroke="#F28FB6" stroke-width="1" opacity=".7"
+                      points="0,26 20,26 30,20 44,24 60,16 76,24 96,20 112,26 130,18 148,24 168,14 200,22"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="panel secstat">
+                <span class="chamfer tl"></span><span class="chamfer br"></span>
+                <div class="panel-h"><span class="deco"></span><b>安全状态</b><span class="id">A-3</span></div>
+                <div class="sr"><span class="k">协议</span><span class="led led-g"></span><span class="v">A-3</span></div>
+                <div class="sr"><span class="k">加密</span><span class="led led-c"></span><span class="v">AES-256</span></div>
+                <div class="sr"><span class="k">威胁</span><span class="led led-c"></span><span class="v">0 无异常</span></div>
+                <div class="sr"><span class="k">防火墙</span><span class="led led-c"></span><span class="v">运行中</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="statusbar">
+        <span><span class="lamp"></span>系统就绪</span>
+        <span>沙箱待审核 <b>14</b></span>
+        <span>研究节点 <b>04</b> 在线</span>
+        <span class="r">爱弥斯核心 <b>v1.0</b></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 启动动画首帧 ================= -->
+  <div class="stage-label"><b>02 · 启动动画首帧 BOOT SEQUENCE</b><span>暖白开场 · 金框 · 青蓝扫描 · AI Core</span></div>
+  <div class="window">
+    <div class="titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="t">AEMEATH BOOT SEQUENCE 01</span>
+    </div>
+    <div class="boot">
+      <svg class="boot-bg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <pattern id="gridb" width="36" height="36" patternUnits="userSpaceOnUse">
+            <path d="M36 0H0v36" fill="none" stroke="#59CFE0" stroke-width=".4"/>
+          </pattern>
+        </defs>
+        <rect width="1000" height="600" fill="url(#gridb)"/>
+        <circle cx="500" cy="290" r="230" fill="none" stroke="#59CFE0" stroke-width=".6"/>
+        <circle cx="500" cy="290" r="180" fill="none" stroke="#59CFE0" stroke-width=".4" stroke-dasharray="2 6"/>
+      </svg>
+
+      <div class="boot-frame"></div>
+
+      <div class="boot-top">
+        <div><b>AEMEATH AGENT</b><small>BIOLOGICAL RESEARCH DIVISION</small></div>
+        <div class="boot-hud">
+          TEMP <b>36.7°C</b><br>O₂ <b>98.7%</b><br>NETWORK <b>STANDBY</b>
+        </div>
+      </div>
+
+      <div class="boot-core">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="core-dot"></div>
+      </div>
+
+      <div class="boot-brand">
+        <b>AEMEATH AGENT</b>
+        <small>BIOLOGICAL RESEARCH DIVISION</small>
+      </div>
+
+      <div class="boot-init">
+        <div>CORE <span class="dots">..........</span> <span class="ok">ONLINE</span></div>
+        <div>NETWORK <span class="dots">.......</span> <span class="ok">ONLINE</span></div>
+        <div>SECURITY <span class="dots">......</span> <span class="gd">A-3</span></div>
+      </div>
+
+      <div class="boot-foot-l">BOOT SEQUENCE 01</div>
+      <div class="boot-foot-r">PRESS ESC TO SKIP</div>
+    </div>
+  </div>
+
+  <!-- ================= 色板 ================= -->
+  <div class="stage-label"><b>03 · COLOR PALETTE</b><span>暖白55 · 青蓝18 · 灰10 · 粉10 · 藏青5 · 金2</span></div>
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:#F7F5EF;border-bottom:1px solid #ddd"></div><div class="i"><b>暖白 Warm White</b><small>#F7F5EF / #F3F1EA</small></div></div>
+    <div class="sw"><div class="c" style="background:#59CFE0"></div><div class="i"><b>青蓝 Tech Cyan</b><small>#59CFE0 / #45BFD2</small></div></div>
+    <div class="sw"><div class="c" style="background:#F28FB6"></div><div class="i"><b>品牌粉 AI Pink</b><small>#F28FB6 / #E97FA9</small></div></div>
+    <div class="sw"><div class="c" style="background:#263B62"></div><div class="i"><b>藏青 Navy</b><small>#263B62 / #304873</small></div></div>
+    <div class="sw"><div class="c" style="background:#CDBB8E"></div><div class="i"><b>香槟金 Gold</b><small>#CDBB8E / #BCA878</small></div></div>
+    <div class="sw"><div class="c" style="background:#A7AFB7"></div><div class="i"><b>辅助灰 Gray</b><small>#7F8A94 / #D8DCE0</small></div></div>
+  </div>
+
+  <!-- ================= 组件样本 ================= -->
+  <div class="stage-label"><b>04 · TERMINAL CONTROLS</b><span>切角 · 细描边 · 状态灯 · 等宽大写</span></div>
+  <div class="components">
+    <div class="comp">
+      <h4>CONTROL BUTTONS</h4>
+      <p style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="ctrl"><span class="cled"></span>NODE SYNC</button>
+        <button class="ctrl ctrl-ai"><span class="cled"></span>AI LINK</button>
+      </p>
+      <p style="margin-top:12px"><button class="ctrl ctrl-go">EXECUTE ▸</button></p>
+    </div>
+    <div class="comp">
+      <h4>DIRECTIVE INPUT</h4>
+      <input class="txt-in" value="CMDLINE · FOCUS GLOW">
+      <p class="lamprow" style="margin-top:16px">
+        <span class="lamp" style="background:#45BFD2"></span>LINK
+        <span class="lamp" style="background:#F28FB6"></span>AI
+        <span class="lamp" style="background:#BCA878"></span>SEC
+      </p>
+    </div>
+    <div class="comp">
+      <h4>SPEC LABELS</h4>
+      <div class="labtags">
+        <span class="labtag cy">BIO-SYNC</span><span class="labtag">LAB-LINK</span>
+        <span class="labtag">NEURAL</span><span class="labtag">R&D-07</span>
+      </div>
+      <p class="note" style="margin-top:14px">数据编号 / 实验标签 / 研究节点统一使用等宽微型字。</p>
+    </div>
+  </div>
+
+  <p class="note">
+    说明：本稿为纯静态视觉确认（v4 精修）。中央视觉为抽象 Neural Core 能量球（头像弱化为意识锚点），配 NEURAL CORE / BIO LINK / SYNC STATUS 节点；
+    Identity 含 BIO STATUS / NEURAL LINK 生命数据；底部为紧凑 CORE CONFIGURATION（分段控制）；右侧含 RESEARCH NODES / DATA LOG / SECURITY STATUS。
+    微动效：Core 呼吸、扫描线往复、状态灯闪烁、数据每 2.2s 轻微刷新（分段按钮可点击试玩），并遵循「减少动态」系统设置。确认后进入阶段三完整开发。
+  </p>
+</div>
+<script>
+/* AEMEATH 生命终端：数据轻微刷新 + 分段控制（视觉演示用） */
+(function(){
+  function $(s){ return document.querySelector(s); }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  function jitter(base, amp, dp){ return (base + (Math.random()*2-1)*amp).toFixed(dp); }
+  setInterval(function(){
+    var pulse = 68 + Math.round(Math.random()*8);
+    $('#dlTx').textContent   = jitter(1.82,.08,2) + ' G/s';
+    $('#dlRx').textContent   = jitter(4.36,.12,2) + ' G/s';
+    $('#dlPulse').textContent= pulse + ' 次/分';
+    $('#bsPulse').textContent= pulse + ' 次/分';
+    $('#bsCell').textContent = jitter(98.4,.3,1) + '%';
+    $('#bsBw').textContent   = jitter(1.80,.07,2) + ' G/s';
+  }, 2200);
+  document.querySelectorAll('.seg').forEach(function(seg){
+    seg.addEventListener('click', function(e){
+      var b = e.target.closest('.seg-btn'); if(!b) return;
+      seg.querySelectorAll('.seg-btn').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+    });
+  });
+  var snd = $('.snd-btn');
+  if (snd) snd.addEventListener('click', function(){ snd.classList.toggle('off'); });
+})();
+</script>
+</body>
+</html>

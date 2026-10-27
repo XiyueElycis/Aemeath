@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AEMEATH · BOOT</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ============================================================
+     固定角标层：启动全程存在；阶段 7 洗白后随主界面语言保留
+     构图与主界面严格呼应：左上品牌块 / 右上HUD / 右下页脚
+     ============================================================ -->
+
+<!-- 左上：品牌块（与主界面侧边栏同构） -->
+<div class="corner brand-corner" id="brandCorner">
+  <img src="assets/brand.png" class="brand-logo" alt="AEMEATH"/>
+  <div class="brand-lines">
+    <div class="brand-name">AEMEATH AGENT</div>
+    <div class="brand-sub" id="brandSub">BIOLOGICAL RESEARCH DIVISION</div>
+  </div>
+</div>
+
+<!-- 右上：HUD 数据（字段与主界面顶栏完全一致） -->
+<div class="corner hud-corner" id="hudCorner">
+  <div class="hud-row"><span class="hud-k">TEMP</span><span class="hud-v" id="hudTemp">--.--</span><span class="hud-u">°C</span></div>
+  <div class="hud-row"><span class="hud-k">OXYGEN</span><span class="hud-v" id="hudOxy">--.-</span><span class="hud-u">%</span></div>
+  <div class="hud-row"><span class="hud-k">NETWORK</span><span class="hud-v" id="hudNet">-.--</span><span class="hud-u">GB/s</span></div>
+  <div class="hud-row"><span class="hud-k">CELL STATUS</span><span class="hud-v" id="hudCell">--.--</span><span class="hud-u">%</span></div>
+  <div class="hud-row"><span class="hud-k">SECURITY</span><span class="hud-v">A-3</span></div>
+  <div class="hud-row"><span class="hud-k">ARCHIVE NODE</span><span class="hud-v">07</span></div>
+  <!-- 极小十字准星角标 -->
+  <div class="crosshair" aria-hidden="true">
+    <span class="ch-h"></span><span class="ch-v"></span>
+  </div>
+</div>
+
+<!-- 左下：启动序列编号 + 随机微数据 -->
+<div class="corner seq-corner" id="seqCorner">
+  <div class="seq-title" id="seqTitle">BOOT SEQUENCE 01</div>
+  <div class="seq-digits" id="seqDigits">0x00000000</div>
+</div>
+
+<!-- 右下：页脚 + SKIP + 设置入口 -->
+<div class="corner foot-corner" id="footCorner">
+  <div class="foot-power">POWERED BY AEMEATH</div>
+  <div class="foot-actions">
+    <button class="ghost-btn" id="settingsBtn" title="启动设置">SETTINGS</button>
+    <button class="ghost-btn" id="skipBtn" title="跳过启动动画（ESC）">PRESS ESC TO SKIP</button>
+  </div>
+</div>
+
+<!-- 中央环形准星：缓慢自转，缺口在正下方 -->
+<div class="ring-sight" id="ringSight" aria-hidden="true">
+  <svg viewBox="0 0 200 200" width="100%" height="100%">
+    <circle class="ring-track" cx="100" cy="100" r="92"/>
+    <circle class="ring-arc" cx="100" cy="100" r="92"/>
+    <circle class="ring-inner" cx="100" cy="100" r="64"/>
+    <line class="ring-tick" x1="100" y1="2" x2="100" y2="16"/>
+    <line class="ring-tick" x1="100" y1="184" x2="100" y2="198"/>
+    <line class="ring-tick" x1="2" y1="100" x2="16" y2="100"/>
+    <line class="ring-tick" x1="184" y1="100" x2="198" y2="100"/>
+  </svg>
+</div>
+
+<!-- 极细扫描线（全宽，1px） -->
+<div class="scanline" id="scanline"></div>
+
+<!-- ============================================================
+     中央舞台：七个阶段依次呈现
+     ============================================================ -->
+<main class="stage" id="stage">
+
+  <!-- 阶段 1：黑场初始化 -->
+  <section class="ph" id="ph1">
+    <pre class="boot-lines" id="bootLines"></pre>
+  </section>
+
+  <!-- 阶段 2：企业 Logo -->
+  <section class="ph" id="ph2">
+    <div class="logo-stage" id="logoStage">
+      <!-- SVG 轮廓扫描层：六边形星环 + 中央生命体符号（在 brand.png 形态上的原创演绎） -->
+      <svg class="logo-svg" viewBox="0 0 120 120" aria-hidden="true">
+        <polygon class="hex" points="60,8 105,34 105,86 60,112 15,86 15,34"/>
+        <polygon class="hex hex-2" points="60,24 91,42 91,78 60,96 29,78 29,42"/>
+        <path class="life" d="M60 44 C48 44 48 58 60 58 C72 58 72 72 60 72 M60 40 V34 M60 86 V80"/>
+        <circle class="life-dot" cx="60" cy="60" r="2.5"/>
+      </svg>
+      <img src="assets/brand.png" class="logo-img" id="logoImg" alt=""/>
+      <div class="logo-glow" id="logoGlow"></div>
+    </div>
+    <div class="logo-text">
+      <div class="lt-main">AEMEATH AGENT</div>
+      <div class="lt-sub">BIOLOGICAL RESEARCH DIVISION</div>
+    </div>
+  </section>
+
+  <!-- 阶段 3：科技宣传 PV 转场 -->
+  <section class="ph" id="ph3">
+    <!-- 展开的极细 UI 线框 -->
+    <div class="pv-frame" aria-hidden="true">
+      <span class="pv-line pv-t"></span><span class="pv-line pv-r"></span>
+      <span class="pv-line pv-b"></span><span class="pv-line pv-l"></span>
+    </div>
+    <!-- DNA 双螺旋 -->
+    <svg class="dna" viewBox="0 0 80 200" aria-hidden="true">
+      <path class="dna-a" d="M40 0 C4 30 76 70 40 100 C4 130 76 170 40 200"/>
+      <path class="dna-b" d="M40 0 C76 30 4 70 40 100 C76 130 4 170 40 200"/>
+      <g class="dna-rungs"></g>
+    </svg>
+    <!-- 神经网络连接图 -->
+    <svg class="neural" viewBox="0 0 260 140" aria-hidden="true">
+      <g class="neuron-edges"></g>
+      <g class="neuron-nodes"></g>
+    </svg>
+    <div class="pv-coords" id="pvCoords">NODE 07 · 36.7N 120.2E · SAMPLE #A-2609</div>
+  </section>
+
+  <!-- 阶段 4：身份认证 -->
+  <section class="ph" id="ph4">
+    <div class="auth-title">IDENTITY VERIFICATION</div>
+    <div class="auth-lines">
+      <div>OPERATOR</div><div>RESEARCHER</div><div>AUTHORIZED PERSONNEL</div>
+    </div>
+    <button class="auth-btn" id="authBtn">AUTHORIZE ACCESS<span class="auth-keyhint">[ENTER]</span></button>
+  </section>
+
+  <!-- 阶段 5：系统启动 -->
+  <section class="ph" id="ph5">
+    <div class="sys-title">SYSTEM CORE <em>ONLINE</em></div>
+    <ul class="modules" id="moduleList">
+      <li data-kind="bio">BIOSYSTEM</li>
+      <li data-kind="sys">AI CORE</li>
+      <li data-kind="sys">RESEARCH NETWORK</li>
+      <li data-kind="sys">DATA CORE</li>
+      <li data-kind="bio">LAB CONTROL</li>
+      <li data-kind="sys">SECURITY</li>
+      <li data-kind="sys">ARCHIVE</li>
+    </ul>
+    <div class="boot-progress">
+      <span class="bp-label">INITIALIZING SYSTEM</span>
+      <span class="bp-bar"><i id="bpFill"></i></span>
+      <span class="bp-pct" id="bpPct">0%</span>
+    </div>
+  </section>
+
+  <!-- 阶段 6：故障 -->
+  <section class="ph glitch-ph" id="ph6">
+    <div class="glitch-text" data-text="DATA STREAM INTERRUPTED">DATA STREAM INTERRUPTED</div>
+    <div class="glitch-sub">SYSTEM CHECK ... WARNING</div>
+  </section>
+
+  <!-- 阶段 7：过曝洗白 -->
+  <section class="ph light-ph" id="ph7">
+    <div class="online-title">SYSTEM ONLINE</div>
+    <div class="welcome">WELCOME, OPERATOR</div>
+    <!-- 认证后粉色心跳波形（全片第三次粉色，克制） -->
+    <svg class="heart-wave" viewBox="0 0 240 40" aria-hidden="true">
+      <polyline class="hw-line" points="0,20 60,20 74,20 84,6 96,34 106,14 114,20 180,20 240,20"/>
+    </svg>
+  </section>
+
+</main>
+
+<!-- 星空层：三层星点（boot.js generateStars 生成），星海氛围 -->
+<div class="starfield" id="starfield" aria-hidden="true">
+  <i></i><i></i><i></i>
+</div>
+
+<!-- 全屏洗入星海层 / 故障色散层 / 噪点 -->
+<div class="washin" id="washin"></div>
+<div class="chromatic" id="chromatic"></div>
+<div class="noise" id="noise"></div>
+
+<!-- 设置面板 -->
+<div class="settings-panel" id="settingsPanel" hidden>
+  <div class="sp-title">STARTUP SETTINGS</div>
+  <div class="sp-row">
+    <span>启动动画</span>
+    <div class="seg" id="modeSeg">
+      <button data-mode="always">每次播放</button>
+      <button data-mode="first">仅首次</button>
+      <button data-mode="never">关闭</button>
+    </div>
+  </div>
+  <div class="sp-row">
+    <span>启动音效</span>
+    <button class="toggle on" id="soundToggle">ON</button>
+  </div>
+  <div class="sp-row">
+    <span>音量</span>
+    <input type="range" id="volumeSlider" min="0" max="100" value="60"/>
+    <span class="vol-num" id="volNum">60</span>
+  </div>
+  <div class="sp-actions">
+    <button class="ghost-btn" id="spClose">CLOSE</button>
+  </div>
+</div>
+
+<script src="boot.js"></script>
+</body>
+</html>

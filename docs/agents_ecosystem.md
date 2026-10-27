@@ -1,8 +1,8 @@
-# Game Doctor 智能体生态系统
+# Aemeath Agent 智能体生态系统
 
 ## 系统概览
 
-Game Doctor 已经发展成为一个包含 12 个智能体的完整游戏辅助生态系统。每个智能体专注于特定功能，通过编排器协同工作，提供全方位的游戏管理解决方案。
+Aemeath Agent 已经发展成为一个包含 12 个智能体的完整游戏辅助生态系统。每个智能体专注于特定功能，通过编排器协同工作，提供全方位的游戏管理解决方案。
 
 ## 架构设计
 
@@ -100,10 +100,10 @@ Game Doctor 已经发展成为一个包含 12 个智能体的完整游戏辅助�
 - 自动索引和回退机制
 
 ### CLI 命令
-- `gamedoctor agents` - 列出所有智能体
-- `gamedoctor analyze <game>` - 分析游戏
-- `gamedoctor rag-index` - 管理 RAG 索引
-- `gamedoctor config check-deps` - 检查依赖
+- `aemeath_agent agents` - 列出所有智能体
+- `aemeath_agent analyze <game>` - 分析游戏
+- `aemeath_agent rag-index` - 管理 RAG 索引
+- `aemeath_agent config check-deps` - 检查依赖
 
 ### 工作流系统
 - 支持多阶段任务执行
@@ -115,7 +115,7 @@ Game Doctor 已经发展成为一个包含 12 个智能体的完整游戏辅助�
 ### 创建新智能体
 
 ```python
-from gamedoctor.agents.base_agent import BaseAgent, AgentTask, AgentResult
+from aemeath_agent.agents.base_agent import BaseAgent, AgentTask, AgentResult
 
 class NewAgent(BaseAgent):
     def __init__(self, config=None):
@@ -134,7 +134,7 @@ class NewAgent(BaseAgent):
 ### 注册智能体
 
 ```python
-from gamedoctor.orchestrator.agent_factory import AgentFactory
+from aemeath_agent.orchestrator.agent_factory import AgentFactory
 
 AgentFactory.register_agent("new_agent", NewAgent)
 ```
@@ -142,7 +142,7 @@ AgentFactory.register_agent("new_agent", NewAgent)
 ### 创建工作流
 
 ```python
-from gamedoctor.orchestrator.orchestrator import GameAgentOrchestrator, OrchestrationPlan
+from aemeath_agent.orchestrator.orchestrator import GameAgentOrchestrator, OrchestrationPlan
 
 plan = OrchestrationPlan(
     name="custom_workflow",
@@ -179,20 +179,20 @@ result = await orchestrator.execute_workflow(plan)
 
 ```bash
 # 列出智能体
-gamedoctor agents
+aemeath_agent agents
 
 # 分析游戏
-gamedoctor analyze "Grand Theft Auto V"
+aemeath_agent analyze "Grand Theft Auto V"
 
 # 完整分析
-gamedoctor analyze "GTA5" --full
+aemeath_agent analyze "GTA5" --full
 ```
 
 ### 编程接口
 
 ```python
-from gamedoctor.orchestrator.agent_factory import AgentManager
-from gamedoctor.orchestrator.base_agent import AgentTask
+from aemeath_agent.orchestrator.agent_factory import AgentManager
+from aemeath_agent.orchestrator.base_agent import AgentTask
 
 # 创建管理器
 manager = AgentManager()
@@ -203,4 +203,4 @@ task = AgentTask("compatibility_check", data={"game_name": "GTA5"})
 result = manager.orchestrator.execute_task(task)
 ```
 
-这个智能体生态系统为 Game Doctor 提供了强大的扩展能力，可以根据需要添加更多智能体，形成一个完整的游戏管理平台。
+这个智能体生态系统为 Aemeath Agent 提供了强大的扩展能力，可以根据需要添加更多智能体，形成一个完整的游戏管理平台。

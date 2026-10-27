@@ -12,16 +12,16 @@ from pathlib import Path
 
 import pytest
 
-from gamedoctor.sandbox import SandboxSession, SandboxViolation
-from gamedoctor.sandbox.session import ChangeOp, SandboxStatus
-from gamedoctor.sandbox import io as sxio
+from aemeath_agent.sandbox import SandboxSession, SandboxViolation
+from aemeath_agent.sandbox.session import ChangeOp, SandboxStatus
+from aemeath_agent.sandbox import io as sxio
 
 
 @pytest.fixture
 def env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    """构造：真实游戏目录 + 隔离的沙箱/备份根（不碰用户 ~/.gamedoctor）。"""
+    """构造：真实游戏目录 + 隔离的沙箱/备份根（不碰用户 ~/.aemeath_agent）。"""
     apphome = tmp_path / "apphome"
-    monkeypatch.setattr("gamedoctor.sandbox.session.app_dir", lambda: apphome)
+    monkeypatch.setattr("aemeath_agent.sandbox.session.app_dir", lambda: apphome)
 
     game = tmp_path / "game"
     (game / "sub").mkdir(parents=True)
@@ -237,7 +237,7 @@ def test_direct_io_matches_native_semantics(tmp_path: Path) -> None:
 # --------------------------------------------------------------------- #
 def test_init_does_not_copy_real_tree(tmp_path: Path, monkeypatch) -> None:
     apphome = tmp_path / "apphome"
-    monkeypatch.setattr("gamedoctor.sandbox.session.app_dir", lambda: apphome)
+    monkeypatch.setattr("aemeath_agent.sandbox.session.app_dir", lambda: apphome)
     game = tmp_path / "biggame"
     (game / "assets").mkdir(parents=True)
     for i in range(1000):

@@ -11,8 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from gamedoctor import context_builder as cb
-from gamedoctor.models import (
+from aemeath_agent import context_builder as cb
+from aemeath_agent.models import (
     EngineFingerprint,
     PlatformInfo,
     RuntimeFingerprint,
@@ -139,9 +139,12 @@ def test_no_game_dir_does_not_touch_engine_scan(monkeypatch, _fake_vram):
 
 
 def test_dir_size_mb(tmp_path: Path):
+    """目录体积统计并入 scan_tree（原 _dir_size_mb 已删除）。"""
+    from aemeath_agent.analyzer.tree import scan_tree
+
     payload = tmp_path / "big.bin"
     payload.write_bytes(b"a" * (2 * 1024 * 1024))  # 恰好 2 MiB
-    assert cb._dir_size_mb(tmp_path) == 2
+    assert scan_tree(tmp_path).size_mb == 2
 
 
 def test_vram_none_when_commands_unavailable(monkeypatch):
@@ -173,3 +176,29 @@ def test_empty_fingerprint_is_lightweight():
     assert fp["fingerprint_ready"] is False
     assert fp["platform"] == "standalone"
     json.dumps(fp)
+
+
+def test_build_context_resolves_game_identity(tmp_path: Path, _fake_vram):
+    """别名库解析结果随上下文与指纹一起产出：指纹与显示口径统一。"""
+    game = _make_unity_game(tmp_path / "wuthering_waves")
+
+    ctx, fp = cb.build_context("wuthering_waves", str(game))
+
+    assert ctx.game_name == "wuthering_waves"      # 原始输入保留供审计
+    assert ctx.game_id == "wuthering_waves"
+    assert ctx.game_display_name == "鸣潮"
+    assert fp["game_name_input"] == "wuthering_waves"
+    assert fp["game_id"] == "wuthering_waves"
+    assert fp["game_display_name"] == "鸣潮"
+    json.dumps(fp, ensure_ascii=False)
+
+
+def test_build_context_unknown_game_identity_empty(tmp_path: Path, _fake_vram):
+    game = _make_unity_game(tmp_path / "Stellaris")
+
+    ctx, fp = cb.build_context("Stellaris", str(game))
+
+    assert ctx.game_id == ""
+    assert ctx.game_display_name == ""
+    assert fp["game_id"] == ""
+    assert fp["game_display_name"] == ""

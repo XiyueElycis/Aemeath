@@ -15,8 +15,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from gamedoctor.errors import SolverError
-from gamedoctor.models import (
+from aemeath_agent.errors import SolverError
+from aemeath_agent.models import (
     ActionLevel,
     ConfidenceLevel,
     ErrorCategory,
@@ -26,7 +26,7 @@ from gamedoctor.models import (
     SourceType,
     TechStackFingerprint,
 )
-from gamedoctor.solver.generator import LLMSolver
+from aemeath_agent.solver.generator import LLMSolver
 
 
 def test_generate_success():

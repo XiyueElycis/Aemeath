@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from gamedoctor.sandbox.gate import ApprovalGate, ApprovalRequest, get_gate, reset_gate
+from aemeath_agent.sandbox.gate import ApprovalGate, ApprovalRequest, get_gate, reset_gate
 
 
 def _req(ticket: str = "T-1", agent: str = "a") -> ApprovalRequest:
@@ -100,7 +100,7 @@ def test_ticket_filter_and_unknown_decide() -> None:
 def test_no_busy_wait_in_source() -> None:
     """TR-2.5：挂起必须基于事件，源码不得出现轮询 sleep。"""
     src = (Path(__file__).resolve().parents[1]
-           / "src" / "gamedoctor" / "sandbox" / "gate.py").read_text(encoding="utf-8")
+           / "src" / "aemeath_agent" / "sandbox" / "gate.py").read_text(encoding="utf-8")
     assert "asyncio.sleep" not in src
     assert "wait_for" in src
 

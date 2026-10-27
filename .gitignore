@@ -14,10 +14,17 @@ venv/
 htmlcov/
 
 # 运行时产物
-.gamedoctor/
+.aemeath_agent/
 backups/
 *.db
 *.sqlite3
+
+# 本地代码快照（重构前的旧副本，不是源码）
+.backups/
+
+# .NET 构建产物（约占仓库体积九成，clone 前不该带上）
+desktop/**/bin/
+desktop/**/obj/
 
 # IDE
 .vscode/

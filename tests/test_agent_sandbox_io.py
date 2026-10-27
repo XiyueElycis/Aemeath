@@ -12,19 +12,19 @@ from types import SimpleNamespace
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentTask
-from gamedoctor.agents.content.game_content_agent import GameContentAgent
-from gamedoctor.agents.scripts.script_editor_agent import ScriptEditorAgent
-from gamedoctor.agents.web.web_search_agent import WebSearchAgent
-from gamedoctor.sandbox import SandboxSession
-from gamedoctor.sandbox import io as sxio
+from aemeath_agent.agents.base_agent import AgentTask
+from aemeath_agent.agents.content.game_content_agent import GameContentAgent
+from aemeath_agent.agents.scripts.script_editor_agent import ScriptEditorAgent
+from aemeath_agent.agents.web.web_search_agent import WebSearchAgent
+from aemeath_agent.sandbox import SandboxSession
+from aemeath_agent.sandbox import io as sxio
 
 
 @pytest.fixture
 def env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     apphome = tmp_path / "apphome"
     fakehome = tmp_path / "home"
-    monkeypatch.setattr("gamedoctor.sandbox.session.app_dir", lambda: apphome)
+    monkeypatch.setattr("aemeath_agent.sandbox.session.app_dir", lambda: apphome)
     monkeypatch.setattr(Path, "home", lambda: fakehome)
 
     game = tmp_path / "game"
@@ -134,7 +134,12 @@ def test_script_editor_direct_mode_hits_real_disk(env, fake_llm_edit) -> None:
     assert not (env.apphome / "sandbox").exists()
 
 
-def test_script_editor_sandbox_cross_root_absolute_rejected(env) -> None:
+def test_script_editor_sandbox_cross_root_absolute_rejected(env, fake_llm_edit) -> None:
+    """越出授权根的绝对路径写入必须被拒。
+
+    ``create`` 会先经 LLM 生成内容再做写入校验，所以这里必须挂 ``fake_llm_edit``；
+    否则会真的去调外部大模型，用例结果就取决于本机凭据（本机未配密钥时会失败）。
+    """
     s = env.make()
     ed = _editor()
     outside = env.game.parent / "evil.ini"
@@ -199,7 +204,7 @@ def test_save_backup_goes_to_side(env) -> None:
               "save_path": str(env.saves), "_sandbox_session": s})))
     assert r.success, r.message
     # 真实备份目录无写入
-    assert not (Path.home() / ".gamedoctor" / "saves_backup" / "GameX").exists()
+    assert not (Path.home() / ".aemeath_agent" / "saves_backup" / "GameX").exists()
     # side 区内有存档副本
     assert list(s.side_dir.rglob("slot1.sav"))
     assert any(c.op == "side_write" for c in s.changes.values())

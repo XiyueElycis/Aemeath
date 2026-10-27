@@ -6,9 +6,9 @@
 （Markdown）切分、向量化后存入 Chroma，查询时按语义召回片段，再由 DeepSeek
 基于召回内容生成答案，从而减少幻觉、给出贴近该游戏真实修复方案的回复。
 
-与项目内 SQLite 知识库（``gamedoctor.knowledge``）互补：SQLite 走"错误签名 →
+与项目内 SQLite 知识库（``aemeath_agent.knowledge``）互补：SQLite 走"错误签名 →
 修复模板"的精确/模糊匹配，本模块走"自然语言 → 知识片段"的语义召回，产物可
-直接拼进 :class:`~gamedoctor.solver.generator.LLMSolver` 的 prompt。
+直接拼进 :class:`~aemeath_agent.solver.generator.LLMSolver` 的 prompt。
 
 多游戏适配
 ----------
@@ -46,9 +46,30 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # 全局配置
 # --------------------------------------------------------------------------- #
 
-# DeepSeek API Key：优先读环境变量，未配置时用内置默认值（仅本地调试，勿提交真实密钥）。
-_DEFAULT_API_KEY = "sk-24ed998e751e465f9de1f9e41c754ca1"
-os.environ.setdefault("DEEPSEEK_API_KEY", _DEFAULT_API_KEY)
+def resolve_deepseek_api_key() -> str:
+    """解析 DeepSeek API Key，**绝不硬编码、绝不打印明文**。
+
+    顺序与项目其余部分一致：系统 Keyring（``llm/deepseek/api_key``）→ 环境变量
+    ``DEEPSEEK_API_KEY``。两边都没有时抛 :class:`RuntimeError` 并给出配置指引。
+    """
+    try:
+        from aemeath_agent.config import load as _load_config
+
+        key = _load_config().secret("llm/deepseek/api_key")
+        if key:
+            return key
+    except Exception:  # aemeath_agent 未安装时退回环境变量
+        pass
+    key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError(
+            "未配置 DeepSeek 密钥。两种配置方式："
+            "① 写入系统 Keyring："
+            "`from aemeath_agent.config import load; "
+            "load().set_secret(\"llm/deepseek/api_key\", \"<key>\")`；"
+            "② 设置环境变量 DEEPSEEK_API_KEY。"
+        )
+    return key
 
 # 数据根目录：本模块所在目录（rag/），每款游戏在其下拥有一个同名子目录存放 Markdown 文档。
 DEFAULT_DATA_ROOT = Path(__file__).resolve().parent
@@ -280,7 +301,8 @@ class RAGKnowledgeBase:
         if not context:
             return "（未检索到该游戏的相关知识，请先放入 Markdown 文档并执行索引。）"
 
-        llm = ChatDeepSeek(model=model, temperature=0)
+        llm = ChatDeepSeek(model=model, temperature=0,
+                           api_key=resolve_deepseek_api_key())
         # 用系统提示约束模型只基于给定片段作答，避免脱离知识库的臆造
         messages = [
             SystemMessage(

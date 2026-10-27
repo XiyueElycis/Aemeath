@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentTask
-from gamedoctor.agents.installation import installation_agent as ia
-from gamedoctor.agents.installation.installation_agent import InstallationAgent
-from gamedoctor.models import GameContext, PlatformInfo
+from aemeath_agent.agents.base_agent import AgentTask
+from aemeath_agent.agents.installation import installation_agent as ia
+from aemeath_agent.agents.installation.installation_agent import InstallationAgent
+from aemeath_agent.models import GameContext, PlatformInfo
 
 
 @pytest.fixture

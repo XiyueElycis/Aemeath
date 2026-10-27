@@ -7,8 +7,8 @@ import os
 import time
 from pathlib import Path
 
-from gamedoctor.agents.base_agent import AgentTask
-from gamedoctor.agents.logs.log_analyzer_agent import (
+from aemeath_agent.agents.base_agent import AgentTask
+from aemeath_agent.agents.logs.log_analyzer_agent import (
     _DEFAULT_LOOKBACK_DAYS,
     _MAX_FILES,
     LogAnalyzerAgent,

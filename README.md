@@ -1,21 +1,22 @@
-# 爱弥斯智能体
+# Aemeath Agent（通用游戏报错解决专家）
 
-一款通用游戏故障诊断与修复工具：自动识别游戏技术栈（引擎 + 运行时 + 平台），解析日志与环境信息，结合本地知识库与多源联网检索定位根因，并以「通用修复原语 + 分级授权 + 可回滚」的方式自动执行修复。
+一款图形界面的通用游戏故障诊断与修复工具（C# WPF 桌面端 + Python FastAPI 后端）：自动识别游戏技术栈（引擎 + 运行时 + 平台），解析日志与环境信息，结合本地知识库与多源联网检索定位根因，并以「通用修复原语 + 分级授权 + 可回滚」的方式自动执行修复。
 
 内置两套知识库能力：
 
-- **SQLite 知识库**（`gamedoctor.knowledge`）：错误签名 → 修复模板的精确/模糊匹配，沉淀成功修复经验。
+- **SQLite 知识库**（`aemeath_agent.knowledge`）：错误签名 → 修复模板的精确/模糊匹配，沉淀成功修复经验。
 - **RAG 向量知识库**（`rag/`）：基于 LangChain + Chroma，把各游戏的排障 Markdown 文档向量化后做语义检索，供大模型生成有据可依的答案。
 
 > 详细产品设计见 [prd.md](./prd.md)。
 >
-> **当前状态（2026-09-11）**：多智能体协作已升级为「**三省六部式制度化架构**」
+> **当前状态（2026-09-25）**：交付形态为 **WPF 桌面端**（`Aemeath` 一键拉起前后端），
+> 不再提供命令行入口。界面为新拟物（Neumorphism）风格聊天工作台，支持编辑/方案双模式、
+> 思考过程展开、思考强度三档与联网搜索开关，并内置「心动模式」Galgame 玩法。
+> 多智能体协作已升级为「**三省六部式制度化架构**」
 > （状态机 + 分权制衡）：接待官分拣 → 规划官起草（LLM 动态规划/模板兜底）→
 > 审议官强制审议（可封驳 ≤3 轮）→ 调度官权限派发 → 领域智能体执行 →
 > 验收 → 回奏；任务票全程留痕（flow_log），智能体不可越级、不可横向调用。
 > 指纹识别层（运行时 / 平台 / 环境 / 文件）已全部替换为真实探测。
-> WPF 桌面端为新拟物（Neumorphism）风格聊天界面，支持编辑/方案双模式、思考过程展开、
-> 思考强度三档与联网搜索开关。**124 项测试通过**。
 
 ## 当前进度
 
@@ -24,7 +25,6 @@
 | 模块 | 说明 |
 |---|---|
 | `models.py` | 跨层数据契约（枚举 + dataclass），序列化/反序列化齐全 |
-| `cli.py` | 命令可用：`diagnose`（`--fix` / `--dry-run` / `--step`）、`rollback`、`feedback`、`config`（含 `set-secret` / `path`）、`chat`、`agents`、`analyze`、`rag-index` |
 | `config.py` | TOML 配置 + 系统 Keyring 存密钥；GUI 设置页可运行时注入（settings.json），优先级高于 config.toml |
 | `pipeline.py` | 六层串联编排，任一层失败降级而不阻断输出；错误正则分类已覆盖 8 个通用类别 |
 | `llm/` | **已接通**：`HttpLLMClient` 适配任意 OpenAI 兼容端点（deepseek / Qwen / 智谱 GLM / Ollama 等）；密钥解析顺序为「显式注入 → Keyring → 环境变量」 |
@@ -46,14 +46,13 @@
 | `agents/` | 13 个领域智能体；安全/启动优化等已接真实系统数据（见下文智能体表） |
 | `server.py` | FastAPI 后端：`/chat`、`/run`、`/analyze`、`/agents`、`/skills`、`/mcps`、`/settings/*` |
 | `desktop/` | WPF 桌面端：新拟物风格聊天界面 + 编辑/方案双模式 + 思考过程展开 + 思考强度三档 + 联网搜索开关 + 技能/MCP 管理页 |
-| `report.py` | Rich 报告渲染 |
-| `tests/` | **124 项测试通过**（制度层 39 项、编排器 23 项、指纹/文件扫描 8 项、LLM 客户端、搜索降级链、文本编辑回滚等） |
+| `tests/` | **384 项测试通过**（制度层 39 项、编排器 23 项、指纹/文件扫描 8 项、LLM 客户端、搜索降级链、文本编辑回滚、心动模式等） |
 
 ### 部分完成（可用但不完整）
 
 | 模块 | 现状 | 缺什么 |
 |---|---|---|
-| `solver/generator.py` | LLM 方案生成链路已由 `agent_router` 对话编排覆盖 | CLI `diagnose` 路径的自动修复动作生成仍依赖知识库匹配 |
+| `solver/generator.py` | LLM 方案生成链路已由 `agent_router` 对话编排覆盖 | 自动修复动作生成仍依赖知识库匹配（未接 LLM 动态生成） |
 | `solver/critic.py` | 结构校验已生效（未知原语剔除 / 必填参数 / L 级别核对） | 语义层审查（动作与错误证据的相关性） |
 | 平台修复原语 | `steam_verify_integrity` / `epic_repair` / `install_runtime` 有接口与策略 | 实际调用 steamcmd / Epic CLI / 运行时静默安装 |
 | `installation` 智能体 | 安装规划、路径优选、磁盘检查、完整性验证可用 | 真正下载/安装游戏（需对接平台 CLI，属独立大功能） |
@@ -67,7 +66,7 @@
 | **P0** | `installation` 对接 steamcmd / Epic CLI 实现真实下载安装；平台修复原语落地 |
 | **P1** | `feedback` → SQLite 修复模板沉淀闭环（目前仅打印）；`solver/critic` 语义审查 |
 | **P2** | 知识库扩充：Minecraft 排障域尚有 30 项高频缺口（依据见 `docs/minecraft_kb_coverage.md`）；社区/社交智能体接真实 API |
-| **非功能** | `rag/rag_data.py` 硬编码 API Key 需移除；`rag/minecraft/minecraft.md` 是空文件待删；`rag/minecraft/rag_data.md` 应改名 `game_version_mismatch.md`；launcher.py 后端 stdout 改落日志文件；`dotnet publish` 单文件发布打包 |
+| **非功能** | `rag/minecraft/minecraft.md` 是空文件待删；`rag/minecraft/rag_data.md` 应改名 `game_version_mismatch.md`；GUI 的 API Key 改为走 Keyring（现状是明文落 `agent_settings.json`）；`dotnet publish` 单文件发布打包 |
 
 ### 近期完成（2026-09-11）
 
@@ -145,7 +144,7 @@
 - **路由**：任务**按智能体注册名直接路由**（`AgentTask.agent`），刻意不走能力匹配——多个智能体能力有重叠（如 `file_read` 同属日志分析与脚本编辑），按名路由最可靠。
 - **门控两级**：阶段级 `dependencies`（前置阶段必选任务失败则整段跳过）+ 任务级 `requires`（前置任务失败/跳过只跳过该任务，兄弟任务照常）；`optional=True` 的增益任务失败不影响整体成败。
 - **安全前置顺序由代码锁死**：`perf_security`(security) 在 `game_content`(dlc) 之前（未过反作弊检测装 Mod 有封号风险）、`game_content`(saves) 在任何写操作之前、`game_content`(version) 在 Mod 版本同步之前、`social_agent` 在 `network_expert` 之后。同一智能体的不同子任务以 name 区分、由 requires 锁序。
-- **执行模型**：`execute` / `execute_workflow` 均为 `async`，CLI 与测试通过 `asyncio.run` 触发。
+- **执行模型**：`execute` / `execute_workflow` 均为 `async`，测试通过 `asyncio.run` 触发。
 
 ## 快速开始
 克隆代码仓库
@@ -158,81 +157,63 @@ git clone https://github.com/XiyueElycis/Aemeath.git
 pip install -e ".[dev]"
 ```
 
-### CLI 使用
+### 启动桌面客户端
 
-```bash
-# 查看命令
-gamedoctor --help
+图形界面是一键启动的：`Aemeath` 会拉起 FastAPI 后端、展开 WPF 窗口，并在你关闭窗口后自动结束后端。
 
-# 诊断（只读，不修改）
-gamedoctor diagnose "某游戏" --error "0xc000007b"
+PowerShell（Windows 推荐）：
 
-# 自动修复（L1 白名单直修 + L2 逐项确认 + 全程备份可回滚）
-gamedoctor diagnose "某游戏" --error "..." --fix
-
-# 干跑：只看将执行的动作，不实际改动
-gamedoctor diagnose "某游戏" --error "..." --fix --dry-run
-
-# 单步模式：每个动作执行前逐项确认
-gamedoctor diagnose "某游戏" --error "..." --fix --step
-
-# 一键回滚
-gamedoctor rollback --id <诊断ID>
-
-# 反馈（沉淀修复模板）
-gamedoctor feedback --id <诊断ID> --result fixed
-
-# 配置与密钥管理（密钥走系统 Keyring，不明文落盘）
-gamedoctor config set-secret <key> <value>
-gamedoctor config path
-
-# 多智能体：交互式会话（类 Claude Code 的 REPL 模式，对话编排走方案三）
-gamedoctor chat --game "某游戏"
-
-# 多智能体：启动 HTTP 后端（供下面「桌面客户端」调用）
-gamedoctor-server
-
-# 多智能体：列出所有智能体
-gamedoctor agents
-
-# 多智能体：快速分析（仅兼容性检测）
-gamedoctor analyze "某游戏"
-
-# 多智能体：完整分析（多阶段编排：兼容性 + 性能 + 网络等）
-gamedoctor analyze "某游戏" --full
+```powershell
+pip install -e ".[server]"
+Aemeath              # 同时拉起后端 + WPF 前端；关闭窗口后自动结束后端
 ```
 
-密钥 key 格式：`llm/<provider>/api_key`、`search/<provider>/api_key`。
+命令提示符（cmd）：
+
+```bat
+pip install -e ".[server]"
+Aemeath
+```
+
+> `Aemeath` 若不在 PATH，改用 `python -m aemeath_agent.launcher`，或把 Scripts 目录加入 PATH。
+> PowerShell（仅当前会话生效）：`$env:Path += ";$env:APPDATA\Python\Python3xx\Scripts"`
+> cmd：`set PATH=%PATH%;%APPDATA%\Python\Python3xx\Scripts`
+
+> 端口冲突（上次异常退出残留的后端占着 8765）会被启动器自动识别并清理；
+> 若被其它程序占用则会报出 PID 与命令行。需要分开调试前后端时见下文
+> [手动分步启动](#手动分步启动)。
 
 ## 桌面客户端（WPF，C# / .NET）
 
 原生 Windows 图形界面，采用 **C# WPF 前端 + Python FastAPI 后端** 架构，XAML 布局。
 
-### 一键启动（推荐）
-
-```bash
-pip install -e ".[server]"
-gameAgent            # 同时拉起后端 + WPF 前端；关闭窗口后自动结束后端
-```
-
-> `gameAgent` 若不在 PATH，改用 `python -m gamedoctor.launcher`，或把
-> `%APPDATA%\Python\Python3xx\Scripts` 加入 PATH。
+一键启动（推荐）见上文 [启动桌面客户端](#启动桌面客户端推荐) —— `Aemeath` 一条命令拉起前后端。
+需要分别调试前后端时，按下文手动分步启动。
 
 ### 手动分步启动
 
 1. 启动后端服务：
 
-   ```bash
+   PowerShell：
+
+   ```powershell
    pip install -e ".[server]"
-   gamedoctor-server            # 默认监听 127.0.0.1:8765
+   python -m aemeath_agent.server      # 默认监听 127.0.0.1:8765
+   ```
+
+   cmd：
+
+   ```bat
+   pip install -e ".[server]"
+   python -m aemeath_agent.server
    ```
 
 2. 构建并运行 WPF 前端：
 
    ```powershell
-   cd desktop\GameDoctor.Desktop
+   cd desktop\AemeathAgent.Desktop
    dotnet build -c Debug
-   dotnet run                   # 或直接运行 bin\Debug\net9.0-windows\GameDoctor.Desktop.exe
+   dotnet run                   # 或直接运行 bin\Debug\net9.0-windows\AemeathAgent.Desktop.exe
    ```
 
 界面为主窗口聊天式工作台（新拟物 Neumorphism 设计系统，`NeuPanel.cs` 凸起/凹陷控件）：
@@ -242,11 +223,13 @@ gameAgent            # 同时拉起后端 + WPF 前端；关闭窗口后自动�
 - **调节项**：思考强度三档（轻度/中度/重度，默认收纳）、联网搜索开关。
 - **设置弹窗**：模型 provider / model 选择、API Key 输入（存入 Keyring）、智能体启用清单。
 - **技能管理页 / MCP 管理页**：独立 Tab，凹陷列表 + 圆角悬停项。
+- **心动模式**：主界面「♥ 心动模式」按钮弹出确认后，打开全屏 WebView2 专属窗口承载 Galgame 页面——与爱弥斯的恋爱线剧情，含好感度、随机事件、章节推进与三种结局（详见下文接口）。
 - 顶部「全部分析」与右侧「智能体状态」卡仍保留单智能体手动执行入口。
 
-后端地址可用环境变量 `GAMEDOCTOR_API` 覆盖（默认 `http://127.0.0.1:8765`）。
+后端地址可用环境变量 `AEMEATH_AGENT_API` 覆盖（默认 `http://127.0.0.1:8765`）。
+PowerShell：`$env:AEMEATH_AGENT_API = "http://127.0.0.1:8765"`；cmd：`set AEMEATH_AGENT_API=http://127.0.0.1:8765`。
 
-后端 REST 接口（见 `src/gamedoctor/server.py`）：
+后端 REST 接口（见 `src/aemeath_agent/server.py`）：
 
 | 方法 / 路径 | 用途 |
 |---|---|
@@ -258,12 +241,17 @@ gameAgent            # 同时拉起后端 + WPF 前端；关闭窗口后自动�
 | `GET /settings/api-key/{provider}` | Key 是否已配置（脱敏） |
 | `POST /settings/api-key` / `DELETE /settings/api-key/{provider}` | 写入 / 删除 API Key |
 | `POST /settings/llm` / `POST /settings/agents` / `POST /settings/skills` / `POST /settings/mcps` | 更新模型、智能体启停、技能、MCP 配置 |
+| `GET /galgame` | 心动模式 Web 前端（静态页，由 WPF `GalgameWindow` 的 WebView2 承载） |
+| `GET /galgame/api/state` | 心动模式存档公开视图（好感度 / 章节 / 历史 / 结局；未开始时返回默认态） |
+| `POST /galgame/api/start` | 开启或继续一段周目 |
+| `POST /galgame/api/chat` | 处理一轮对话。请求 `{message}`；返回 `{reply, narration, affinity_delta, event, transition, ending, ...}` |
+| `POST /galgame/api/reset` | 清空存档并重新开始 |
 
 > **API Key 配置优先级**：运行时显式注入（设置页/settings.json）> Keyring > 环境变量。
 > Key 不生效时优先检查是否被环境变量覆盖；密钥格式为 `llm/<provider>/api_key`、
 > `search/<provider>/api_key`。
 
-### RAG 知识库使用
+## RAG 知识库使用
 
 ```bash
 pip install langchain-deepseek langchain-community langchain-text-splitters langchain-core chromadb sentence-transformers
@@ -279,49 +267,65 @@ chunks = kb.search("minecraft", "找不到 Java 运行环境")
 answer = kb.ask("minecraft", "启动器提示找不到 Java 怎么解决？")
 ```
 
+`kb.ask()` 需要 DeepSeek 密钥，解析顺序为 Keyring（`llm/deepseek/api_key`）→ 环境变量
+`DEEPSEEK_API_KEY`，两边都没有时抛错并提示配置方式——**密钥不落在源码里**。
+
+写入系统 Keyring：
+
+```python
+from aemeath_agent.config import load
+
+load().set_secret("llm/deepseek/api_key", "<你的 key>")   # 存入 Windows 凭据管理器
+```
+
 每款游戏对应一个子目录，文档格式为带 YAML front-matter 的 Markdown（见下文「知识库文档格式」）。
 
 ## 项目结构
 
 ```text
-├── prd.md                    # 产品设计
-├── docs/                     # 评估与调研文档
+├── prd.md                     # 产品设计
+├── docs/                      # 评估与调研文档
 │   └── minecraft_kb_coverage.md  # Minecraft 知识库覆盖率评估
-├── pyproject.toml            # 依赖与打包配置
-├── src/gamedoctor/           # 诊断核心（分层架构）
-│   ├── fingerprint/          # ① 指纹识别层（引擎 / 运行时 / 平台）
-│   ├── analyzer/             # ② 信息采集层（日志 / 文件 / 环境）
-│   ├── knowledge/            # ③ 本地知识库（SQLite RAG + 可选向量检索）
-│   ├── searcher/             # ③ 多源联网检索（搜索模板 + 数据源适配器）
-│   ├── llm/                  # ④ LLM 接入（OpenAI 兼容客户端）+ agent_router 对话编排
-│   ├── solver/               # ④ 方案生成（机器可执行动作序列）与交叉自检
-│   ├── fixer/                # ⑤ 自动修复（原语库 / 分级授权 / 事务化执行 / 备份回滚）
-│   │   ├── primitives/       #   修复原语库（文件 / 文本 / 配置 / 平台 / 运行时）
-│   │   └── text_edit.py      #   文本编辑算法（替换 / ini / json / kv 改值）
-│   ├── textfile.py           #   文本文件安全读写底座（编码 / 行尾保真）
-│   ├── models.py             # 跨层数据契约（枚举 + dataclass）
-│   ├── pipeline.py           # 六层串联编排
-│   ├── agents/               # 领域智能体集群（15 个：12 领域 + 日志/脚本/联网，+ BaseAgent 基类）
-│   ├── governance/         # 三省六部制度层：状态机/权限矩阵/规划官/审议官/协调器
-│   ├── orchestrator/       # 智能体工厂 + 调度官执行器（4 工作流模板 / 阶段并行 / 两级门控）
-│   ├── utils/                # 系统信息收集 / 依赖检查
-│   ├── cli.py                # Typer 命令行入口
-│   ├── repl.py               # 交互式会话（类 Claude Code 的 REPL）
-│   ├── launcher.py           # 一键拉起后端 + WPF 前端（gameAgent）
-│   └── server.py             # FastAPI HTTP 后端（对话 / 智能体 / 设置，见上文接口表）
-├── desktop/                  # C# WPF 桌面客户端（.NET 9 + XAML）
-│   └── GameDoctor.Desktop/
-│       ├── App.xaml          #   新拟物设计系统（设计令牌 / 控件样式）
-│       ├── NeuPanel.cs       #   新拟物卡片控件（凸起 / Inset 凹陷 + 双投影）
-│       ├── MainWindow.xaml   #   聊天工作台（对话区 / 双模式 / 思考展开 / 设置弹窗）
-│       ├── SkillsPage.xaml   #   技能管理页
-│       ├── McpPage.xaml      #   MCP 管理页
-│       └── AgentApiClient.cs #   后端 HttpClient 封装
-├── rag/                      # RAG 向量知识库（LangChain + Chroma）
-│   ├── rag_data.py           # 多游戏适配器 + 检索/生成接口
-│   ├── Grand_Theft_Auto_V/   # GTA5 排障知识文档（12 篇）
-│   └── minecraft/            # Minecraft 排障知识文档（21 篇，另有 1 个空文件待清理）
-└── tests/                    # 单元测试（124 项：制度层 39 / 编排器 23 / 指纹扫描 8 / LLM / 搜索 / 编辑回滚等）
+├── pyproject.toml             # 依赖与打包配置
+├── src/aemeath_agent/            # 诊断核心（分层架构）
+│   ├── fingerprint/           # ① 指纹识别层（引擎 / 运行时 / 平台）
+│   ├── analyzer/              # ② 信息采集层（日志 / 文件 / 环境）
+│   ├── knowledge/             # ③ 本地知识库（SQLite RAG + 可选向量检索）
+│   ├── searcher/              # ③ 多源联网检索（搜索模板 + 数据源适配器）
+│   ├── llm/                   # ④ LLM 接入（OpenAI 兼容客户端）+ agent_router 对话编排
+│   ├── solver/                # ④ 方案生成（机器可执行动作序列）与交叉自检
+│   ├── fixer/                 # ⑤ 自动修复（原语库 / 分级授权 / 事务化执行 / 备份回滚）
+│   │   ├── primitives/        # 修复原语库（文件 / 文本 / 配置 / 平台 / 运行时）
+│   │   └── text_edit.py       # 文本编辑算法（替换 / ini / json / kv 改值）
+│   ├── textfile.py            # 文本文件安全读写底座（编码 / 行尾保真）
+│   ├── models.py              # 跨层数据契约（枚举 + dataclass）
+│   ├── pipeline.py            # 六层串联编排
+│   ├── agents/                # 领域智能体集群（15 个：12 领域 + 日志/脚本/联网，+ BaseAgent 基类）
+│   ├── governance/            # 三省六部制度层：状态机/权限矩阵/规划官/审议官/协调器
+│   ├── orchestrator/          # 智能体工厂 + 调度官执行器（4 工作流模板 / 阶段并行 / 两级门控）
+│   ├── utils/                 # 系统信息收集 / 依赖检查
+│   ├── galgame/               # 心动模式（Galgame 引擎 + 内嵌 Web 前端）
+│   │   ├── engine.py          # 每轮一次结构化 LLM 调用（回复 / 旁白 / 好感度 / 事件）
+│   │   ├── events.py          # 事件清单 / 章节 / 三种结局定义
+│   │   ├── state.py           # 存档（好感度 / 章节 / 历史 / 结局），原子写
+│   │   └── web/               # 页面与样式（index.html / styles.css / app.js + 立绘素材）
+│   ├── launcher.py            # 一键拉起后端 + WPF 前端（Aemeath）
+│   └── server.py              # FastAPI HTTP 后端（对话 / 智能体 / 设置，见上文接口表）
+├── desktop/                   # C# WPF 桌面客户端（.NET 9 + XAML）
+│   └── AemeathAgent.Desktop/
+│       ├── App.xaml           # 新拟物设计系统（设计令牌 / 控件样式）
+│       ├── NeuPanel.cs        # 新拟物卡片控件（凸起 / Inset 凹陷 + 双投影）
+│       ├── MainWindow.xaml    # 聊天工作台（对话区 / 双模式 / 思考展开 / 设置弹窗）
+│       ├── SkillsPage.xaml    # 技能管理页
+│       ├── McpPage.xaml       # MCP 管理页
+│       ├── SandboxWindows.cs  # 授权确认 / 沙箱会话等弹窗
+│       ├── GalgameWindow.xaml # 心动模式专属窗口（WebView2 承载 /galgame/）
+│       └── AgentApiClient.cs  # 后端 HttpClient 封装
+├── rag/                       # RAG 向量知识库（LangChain + Chroma）
+│   ├── rag_data.py            # 多游戏适配器 + 检索/生成接口
+│   ├── Grand_Theft_Auto_V/    # GTA5 排障知识文档（12 篇）
+│   └── minecraft/             # Minecraft 排障知识文档（21 篇，另有 1 个空文件待清理）
+└── tests/                     # 单元测试（384 项：制度层 39 / 编排器 23 / 指纹扫描 8 / LLM / 搜索 / 编辑回滚 / 心动模式等）
 ```
 
 ## 关键设计约定

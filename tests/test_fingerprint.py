@@ -13,9 +13,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from gamedoctor.analyzer.files import DefaultFileScanner
-from gamedoctor.fingerprint.platform import DefaultPlatformAdapter
-from gamedoctor.models import (
+from aemeath_agent.analyzer.files import DefaultFileScanner
+from aemeath_agent.fingerprint.platform import DefaultPlatformAdapter
+from aemeath_agent.models import (
     EngineFingerprint,
     PlatformInfo,
     RuntimeFingerprint,

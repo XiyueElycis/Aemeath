@@ -1,4 +1,4 @@
-# PRD：通用游戏报错解决专家（Game Doctor）
+# PRD：通用游戏报错解决专家（Aemeath Agent）
 
 | 字段 | 内容 |
 |---|---|
@@ -51,7 +51,7 @@
 | 指纹识别 | 引擎签名库 + psutil + 系统命令 | 见 §4.1 |
 | **修复执行** | 修复原语库 + 事务化执行器（备份/回滚） | 见 4.5；基于 shutil / subprocess / 平台 CLI |
 | **平台接口** | Steam（steamcmd / 校验完整性）/ Epic / GOG CLI | 修复原语的平台适配 |
-| 配置管理 | TOML（tomllib + tomli-w），Keyring 存密钥 | ~/.gamedoctor/config.toml |
+| 配置管理 | TOML（tomllib + tomli-w），Keyring 存密钥 | ~/.aemeath_agent/config.toml |
 | 打包分发 | pipx / PyInstaller | 单文件可选 |
 
 ---
@@ -59,7 +59,7 @@
 ## 3. 总体架构
 
 ```
-gamedoctor diagnose [--fix]
+aemeath_agent diagnose [--fix]
         │
         ▼
 ┌─────────────────────────────────────────────┐
@@ -149,15 +149,15 @@ gamedoctor diagnose [--fix]
 ```
 --fix 触发
   ├─ 预检：生成修复计划 + 影响清单，向用户展示
-  ├─ 备份：对将被改动的文件/配置做快照（~/.gamedoctor/backups/<诊断ID>/）
+  ├─ 备份：对将被改动的文件/配置做快照（~/.aemeath_agent/backups/<诊断ID>/）
   ├─ 执行：按优先级逐项应用原语（L1 直跑，L2 逐项确认）
   ├─ 验证：每步后跑对应检查点（复用分步验证协议）
   └─ 回滚：任一步验证失败 → 自动还原备份，并报告失败点
 ```
 
-- **Dry-run 模式**：`gamedoctor diagnose --fix --dry-run` 只输出将执行的动作与影响，不实际改动
+- **Dry-run 模式**：`aemeath_agent diagnose --fix --dry-run` 只输出将执行的动作与影响，不实际改动
 - **单步模式**：`--step` 每步暂停等待确认，适合谨慎用户
-- **一键回滚**：`gamedoctor rollback --id <诊断ID>` 手动还原最近一次修复
+- **一键回滚**：`aemeath_agent rollback --id <诊断ID>` 手动还原最近一次修复
 
 ### 4.6 F6：LLM 推理管线（P0）
 
@@ -185,7 +185,7 @@ gamedoctor diagnose [--fix]
 ### 4.8 F8：反馈闭环与知识沉淀（P2）
 
 ```
-gamedoctor feedback --id <诊断ID> --result fixed/partial/failed
+aemeath_agent feedback --id <诊断ID> --result fixed/partial/failed
 ```
 - fixed → 知识条目有效计数 +1；failed → -1 并标记复查
 - **成功自动修复的动作序列**沉淀为可复用修复模板，同技术栈同类问题下次可直接复用
@@ -210,7 +210,7 @@ DX12 下 Shader 编译失败，与驱动 551.86 已知问题匹配。
    → 验证: 启动游戏，通过开场 Shader 编译
 
 ### ⚙️ 自动修复执行结果（--fix）
-- 备份: ~/.gamedoctor/backups/20260904-001/ ✅
+- 备份: ~/.aemeath_agent/backups/20260904-001/ ✅
 - [1/2] 修改启动配置加 -dx11 ...... ✅ 验证通过
 - [2/2] 驱动回滚 ................... ⏭️ 需手动（L3）
 - 结论: 1 项已自动修复，1 项需手动
@@ -262,10 +262,10 @@ DX12 下 Shader 编译失败，与驱动 551.86 已知问题匹配。
 ## 附录：项目结构
 
 ```
-game-doctor/
+aemeath-agent/
 ├── pyproject.toml
 ├── prd.md                  ← 本文档
-├── src/gamedoctor/
+├── src/aemeath_agent/
 │   ├── cli.py              # Typer CLI 入口（diagnose/--fix/rollback）
 │   ├── config.py           # TOML 配置 + Keyring
 │   ├── fingerprint/        # 引擎签名库 / 运行时探测 / 平台适配

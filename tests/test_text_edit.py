@@ -8,19 +8,19 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from gamedoctor.analyzer import peek_text_file
-from gamedoctor.errors import TextEditError
-from gamedoctor.fixer.backup.manager import BackupManager
-from gamedoctor.fixer.executor.transactional import ExecutionMode, TransactionalExecutor
-from gamedoctor.fixer.primitives import get as get_primitive
-from gamedoctor.fixer.text_edit import (
+from aemeath_agent.analyzer import peek_text_file
+from aemeath_agent.errors import TextEditError
+from aemeath_agent.fixer.backup.manager import BackupManager
+from aemeath_agent.fixer.executor.transactional import ExecutionMode, TransactionalExecutor
+from aemeath_agent.fixer.primitives import get as get_primitive
+from aemeath_agent.fixer.text_edit import (
     replace_literal,
     replace_regex,
     set_ini_value,
     set_json_value,
 )
-from gamedoctor.models import ActionLevel, RepairAction, RepairPlan, TechStackFingerprint
-from gamedoctor.textfile import TextDoc, detect_encoding
+from aemeath_agent.models import ActionLevel, RepairAction, RepairPlan, TechStackFingerprint
+from aemeath_agent.textfile import TextDoc, detect_encoding
 
 FP = TechStackFingerprint(game_name="test_game")
 

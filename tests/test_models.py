@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from gamedoctor.models import (
+from aemeath_agent.models import (
     ActionLevel,
     ErrorCategory,
     RepairAction,

@@ -22,24 +22,24 @@
 - 不做操作系统权限提升或"以 Windows 用户身份重新认证"（UAC）；"以用户授权行动"在本期指**应用内显式任务授权**，不涉及操作系统账户令牌。
 - 不做逐字节 diff 编辑器/三方合并；文本预览仅展示新旧全文（可选行级 diff 为加分项）。
 - 不做沙箱内运行游戏/安装器本体（安装类智能体当前只做目录规划，不实际执行安装器）。
-- 不改造 `gamedoctor/fixer/` 旧修复链路（当前编排不经过它）与任务票持久化体系。
+- 不改造 `aemeath_agent/fixer/` 旧修复链路（当前编排不经过它）与任务票持久化体系。
 - 不做多用户/远程审批；授权仅本机单用户。
 
 ## Background & Context
 
 - 现有安全控制两层：
-  1. 角色派发矩阵 [permissions.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/governance/permissions.py)：管"谁能调用谁"；
-  2. 运行模式 `mode=edit|plan`：[reviewer.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/governance/reviewer.py) 在方案模式下硬封驳 `MUTATING_AGENTS`。
+  1. 角色派发矩阵 [permissions.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/governance/permissions.py)：管"谁能调用谁"；
+  2. 运行模式 `mode=edit|plan`：[reviewer.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/governance/reviewer.py) 在方案模式下硬封驳 `MUTATING_AGENTS`。
   两层都不回答"任务在哪片文件系统上执行、凭谁的即时授权"。
 - 实际文件系统写操作面（已全量盘点，数量很少）：
-  - [script_editor_agent.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/scripts/script_editor_agent.py)：`write_text`（edit/create，L164/L195）、`unlink`（delete，L217）、`copy2`（replace，L259）、自发备份 `_backup`（L349-361）；路径经 `_resolve_file`（已有 `relative_to` 穿越防护）。
-  - [web_search_agent.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/web/web_search_agent.py)：下载 `write_bytes`（L152）、自发备份（L214-218）；路径经 `_resolve_dest`。
-  - [save_manager_agent.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/agents/saves/save_manager_agent.py)：备份 `copy2`（L110-113），输出到备份目录。
-  - [installation_agent.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/installation/installation_agent.py)：`mkdir`（L138）。
+  - [script_editor_agent.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/scripts/script_editor_agent.py)：`write_text`（edit/create，L164/L195）、`unlink`（delete，L217）、`copy2`（replace，L259）、自发备份 `_backup`（L349-361）；路径经 `_resolve_file`（已有 `relative_to` 穿越防护）。
+  - [web_search_agent.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/web/web_search_agent.py)：下载 `write_bytes`（L152）、自发备份（L214-218）；路径经 `_resolve_dest`。
+  - [save_manager_agent.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/agents/saves/save_manager_agent.py)：备份 `copy2`（L110-113），输出到备份目录。
+  - [installation_agent.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/installation/installation_agent.py)：`mkdir`（L138）。
   - dlc_manager / update_manager：无任何落盘调用（当前为规划/检测型）。
-- 任务执行统一收口：[orchestrator.py](file:///d:/Python/游戏辅助安装智能体/src/gamedoctor/orchestrator/orchestrator.py#L229-L245) `_execute_task_with_context`，并行（gather）与串行阶段都经过它；单智能体直办路径经 coordinator 补走完整链路后同样过调度官 → orchestrator 执行。审批门单点挂载即可全覆盖。
+- 任务执行统一收口：[orchestrator.py](file:///d:/Python/游戏辅助安装智能体/src/aemeath_agent/orchestrator/orchestrator.py#L229-L245) `_execute_task_with_context`，并行（gather）与串行阶段都经过它；单智能体直办路径经 coordinator 补走完整链路后同样过调度官 → orchestrator 执行。审批门单点挂载即可全覆盖。
 - 票据身份：`GovTicket` 已含 `ticket_id`；执行时 `task.data` 已携带 `game_dir/game_context/timestamp` 等，并已有直接放置 Python 对象（`GameContext`）的先例，沙箱会话对象按同口径注入。
-- 前端：模式开关在 [MainWindow.xaml](file:///d:/Python/游戏辅助安装智能体/desktop/GameDoctor.Desktop/MainWindow.xaml#L52-L63)；请求由 [AgentApiClient.ChatAsync](file:///d:/Python/游戏辅助安装智能体/desktop/GameDoctor.Desktop/AgentApiClient.cs#L219-L225) 以匿名 JSON 发送；错误/状态展示在 MainWindow.xaml.cs 事件流面板。
+- 前端：模式开关在 [MainWindow.xaml](file:///d:/Python/游戏辅助安装智能体/desktop/AemeathAgent.Desktop/MainWindow.xaml#L52-L63)；请求由 [AgentApiClient.ChatAsync](file:///d:/Python/游戏辅助安装智能体/desktop/AemeathAgent.Desktop/AgentApiClient.cs#L219-L225) 以匿名 JSON 发送；错误/状态展示在 MainWindow.xaml.cs 事件流面板。
 - 后端 FastAPI 端口 8765，已有全局异常处理器返回 JSON；桌面端与后端为同机进程。
 
 ## Functional Requirements
@@ -59,7 +59,7 @@
 
 ### 副本沙箱
 
-- **FR-8**：sandbox 模式按票据创建沙箱会话，根目录 `~/.gamedoctor/sandbox/<ticket_id>/`，含 `overlay/`（写入覆盖层，保持相对真实根的目录结构）、`side/`（游戏根外写入的重定向区）、`meta.json`（票据、真实根、时间、状态、变更清单）。**不**整盘复制游戏目录，仅被触碰文件按需进入 overlay。
+- **FR-8**：sandbox 模式按票据创建沙箱会话，根目录 `~/.aemeath_agent/sandbox/<ticket_id>/`，含 `overlay/`（写入覆盖层，保持相对真实根的目录结构）、`side/`（游戏根外写入的重定向区）、`meta.json`（票据、真实根、时间、状态、变更清单）。**不**整盘复制游戏目录，仅被触碰文件按需进入 overlay。
 - **FR-9**：读语义：文件在 overlay 存在则读 overlay，否则透传真实文件；已删除文件（tombstone）视为不存在。写语义：create/edit/replace/download/建目录全部重定向到 overlay；delete 在变更清单记 tombstone 且不删真实文件。游戏根之外的写（含各 agent 自发备份、存档备份输出）重定向到 `side/`，不允许写入真实位置。
 - **FR-10**：所有经沙箱的路径解析必须保留并强化穿越防护：真实根内映射用 `resolve()+relative_to`；逃逸路径（`..`、跨根绝对路径）直接拒绝并返回可读错误；沙箱模式下任何对真实文件系统的写入尝试（绕过 helper 的落盘）在代码评审/测试口径中视为缺陷。
 - **FR-11**：上述 4 个有落盘行为的智能体（script_editor/web_search/save_manager/installation）改用统一的沙箱感知文件操作 helper（session 为 None 时等价直接落盘，direct 模式行为不变）；只读智能体（log_analyzer 等）与 dlc/update 无需改造。
@@ -68,7 +68,7 @@
 
 - **FR-12**：票据全部任务结束后（sandbox 模式），`/chat` 响应携带沙箱票据号与变更清单；WPF 弹出变更审核面板：文件相对路径、变更类型（新建/修改/删除/下载/根外输出）、大小；文本文件可查看新内容（修改类并排展示旧内容），二进制/非文本只展示元信息（大小、扩展名）。
 - **FR-13**：后端提供 `GET /sandbox/sessions/{ticket_id}`（详情+清单）、`POST /sandbox/sessions/{ticket_id}/apply`、`POST /sandbox/sessions/{ticket_id}/discard`、`GET /sandbox/pending`（列出 ready 未决会话，供应用重启后找回）。
-- **FR-14**：apply 语义：逐个变更项执行——修改/删除真实文件前先用现有备份机制备份到 `~/.gamedoctor/backups/`；overlay 文件覆盖/新建到真实位置；tombstone 项删除真实文件；`side/` 内输出复制回其原始目标位置；逐项记录成功/失败并返回明细。任一项失败不中断其余项，响应汇总失败项与备份位置；会话状态机为 `running → ready → applied | discarded`。
+- **FR-14**：apply 语义：逐个变更项执行——修改/删除真实文件前先用现有备份机制备份到 `~/.aemeath_agent/backups/`；overlay 文件覆盖/新建到真实位置；tombstone 项删除真实文件；`side/` 内输出复制回其原始目标位置；逐项记录成功/失败并返回明细。任一项失败不中断其余项，响应汇总失败项与备份位置；会话状态机为 `running → ready → applied | discarded`。
 - **FR-15**：discard 语义：删除该票据沙箱目录，真实文件系统零变化；最终回复明确告知变更已丢弃。
 - **FR-16**：沙箱模式最终回奏话术必须区分"已在沙箱完成、待审核应用"与"已落盘完成"；未应用前不得向用户声称修改已生效。
 
@@ -118,7 +118,7 @@
 - **Type**: `rule`
 - **Given**: sandbox 模式下 agent 对授权根内文件执行 create/edit/delete/replace/download，对根外目标执行备份写入
 - **When**: 任务执行完毕但用户尚未 apply
-- **Then**: 真实游戏目录内容与执行前逐字节一致；变更全部出现在 `~/.gamedoctor/sandbox/<ticket_id>/`（overlay/side）与 meta.json；删除仅记 tombstone
+- **Then**: 真实游戏目录内容与执行前逐字节一致；变更全部出现在 `~/.aemeath_agent/sandbox/<ticket_id>/`（overlay/side）与 meta.json；删除仅记 tombstone
 - **Pass Condition**: 测试对真实目录做文件快照（哈希清单），任务前后一致；overlay 中存在对应产物；meta.json 变更条目齐全
 - **Evidence**: 沙箱模块测试输出
 
@@ -142,7 +142,7 @@
 - **Type**: `rule`
 - **Given**: 一个 ready 沙箱会话含新建/修改/删除/根外输出四类变更
 - **When**: 调用 apply
-- **Then**: 被修改/删除的真实文件先出现在 `~/.gamedoctor/backups/`；overlay 内容落到位、tombstone 文件被删、side 输出回到原位置；会话状态 applied，响应含逐项结果；discard 另一会话后真实目录无变化且沙箱目录被清理
+- **Then**: 被修改/删除的真实文件先出现在 `~/.aemeath_agent/backups/`；overlay 内容落到位、tombstone 文件被删、side 输出回到原位置；会话状态 applied，响应含逐项结果；discard 另一会话后真实目录无变化且沙箱目录被清理
 - **Pass Condition**: apply 与 discard 两条端到端测试通过（含备份存在性断言）
 - **Evidence**: 沙箱模块/API 测试输出
 
@@ -190,5 +190,5 @@
 
 - [ ] 授权超时 10 分钟是否合适？（先按 10 分钟常量实现，设置项可后续追加）
 - [ ] HTTP 默认 sandbox 会让既有自动化脚本/测试首次遇到审批挂起——按 NFR-2 显式改测试为 direct；是否需要在设置中持久化用户的模式选择？（拟：会话内保持，不新增设置项；如用户要求再持久化）
-- [ ] `side/` 根外输出（如存档备份到 `~/.gamedoctor/backups`）apply 时直接写回原位置（备份类产物无需再备份）——如不认可，可改为 apply 时丢弃 side。
+- [ ] `side/` 根外输出（如存档备份到 `~/.aemeath_agent/backups`）apply 时直接写回原位置（备份类产物无需再备份）——如不认可，可改为 apply 时丢弃 side。
 - [ ] 修改类文本预览：并排新旧全文即可，还是必须行级 diff？（拟：先全文并排，行级 diff 为加分不阻塞验收）

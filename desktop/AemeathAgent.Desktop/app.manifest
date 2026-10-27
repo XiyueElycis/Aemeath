@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="AemeathAgent.Desktop" />
+
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 / 11 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <!-- 高 DPI 声明已迁移到 csproj 的 <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+           （WinForms 托盘要求由项目属性配置，避免 WFO0003 警告与重复声明） -->
+    </windowsSettings>
+  </application>
+</assembly>

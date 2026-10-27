@@ -16,22 +16,22 @@ from pathlib import Path
 import pytest
 
 # 导入原语包以填充 REGISTRY（policy 兜底拦截依赖它）
-import gamedoctor.fixer.primitives  # noqa: F401
-from gamedoctor.fingerprint.runtime import (
+import aemeath_agent.fixer.primitives  # noqa: F401
+from aemeath_agent.fingerprint.runtime import (
     parse_dotnet_runtime_line,
     parse_vc_redist_name,
 )
-from gamedoctor.fixer.backup.manager import BackupManager
-from gamedoctor.fixer.executor.transactional import ExecutionMode, TransactionalExecutor
-from gamedoctor.fixer.policy.levels import DefaultAuthorizationPolicy
-from gamedoctor.fixer.primitives import get as get_primitive
-from gamedoctor.fixer.primitives.runtime import (
+from aemeath_agent.fixer.backup.manager import BackupManager
+from aemeath_agent.fixer.executor.transactional import ExecutionMode, TransactionalExecutor
+from aemeath_agent.fixer.policy.levels import DefaultAuthorizationPolicy
+from aemeath_agent.fixer.primitives import get as get_primitive
+from aemeath_agent.fixer.primitives.runtime import (
     SUPPORTED_RUNTIME_COMPONENTS,
     build_guidance,
     component_installed,
     resolve_component,
 )
-from gamedoctor.models import (
+from aemeath_agent.models import (
     ActionLevel,
     FixStatus,
     RepairAction,

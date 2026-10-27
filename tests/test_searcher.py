@@ -13,10 +13,10 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from gamedoctor.config import Config
-from gamedoctor.errors import SearchError
-from gamedoctor.models import SearchResult, SourceType
-from gamedoctor.searcher.adapters import DuckDuckGoProvider, SearchEngine, TavilyProvider
+from aemeath_agent.config import Config
+from aemeath_agent.errors import SearchError
+from aemeath_agent.models import SearchResult, SourceType
+from aemeath_agent.searcher.adapters import DuckDuckGoProvider, SearchEngine, TavilyProvider
 
 
 def test_duckduckgo_success():
@@ -30,7 +30,7 @@ def test_duckduckgo_success():
     </div>
     </html>
     """
-    with patch("gamedoctor.searcher.adapters.httpx.get") as mock_get:
+    with patch("aemeath_agent.searcher.adapters.httpx.get") as mock_get:
         mock_resp = Mock()
         mock_resp.status_code = 200
         mock_resp.text = html
@@ -49,7 +49,7 @@ def test_duckduckgo_success():
 def test_duckduckgo_empty_result():
     """DDG 无结果抛 SearchError。"""
     html = "<html><div class='results'>No results</div></html>"
-    with patch("gamedoctor.searcher.adapters.httpx.get") as mock_get:
+    with patch("aemeath_agent.searcher.adapters.httpx.get") as mock_get:
         mock_resp = Mock()
         mock_resp.text = html
         mock_get.return_value = mock_resp
@@ -68,7 +68,7 @@ def test_tavily_no_key():
         provider.search("test", top_k=1)
 
 
-@patch("gamedoctor.searcher.adapters.httpx.post")
+@patch("aemeath_agent.searcher.adapters.httpx.post")
 def test_tavily_with_key(post_mock):
     """Tavily 有 key 成功检索。"""
     cfg = Config()
@@ -102,8 +102,8 @@ def test_search_engine_fallback():
     engine = SearchEngine(cfg)
 
     # mock Tavily 抛错误、DDG 成功
-    with patch("gamedoctor.searcher.adapters.TavilyProvider.search") as mock_tavily, \
-         patch("gamedoctor.searcher.adapters.DuckDuckGoProvider.search") as mock_ddg:
+    with patch("aemeath_agent.searcher.adapters.TavilyProvider.search") as mock_tavily, \
+         patch("aemeath_agent.searcher.adapters.DuckDuckGoProvider.search") as mock_ddg:
         mock_tavily.side_effect = SearchError("Network error")
         mock_ddg.return_value = [
             SearchResult("DDG Result", "http://ddg.com", "DDG snippet", "duckduckgo", 0)
@@ -122,7 +122,7 @@ def test_multi_query_fallback():
     cfg = Config()
     engine = SearchEngine(cfg)  # 无 key，只走 DDG
 
-    with patch("gamedoctor.searcher.adapters.DuckDuckGoProvider.search") as mock_ddg:
+    with patch("aemeath_agent.searcher.adapters.DuckDuckGoProvider.search") as mock_ddg:
         mock_ddg.return_value = [
             SearchResult("Result", "http://test.com", "snippet", "duckduckgo", 0)
         ]
@@ -139,7 +139,7 @@ def test_max_searches_limit():
     cfg = Config(data={"search": {"max_searches": 2, "provider": "duckduckgo"}})
     engine = SearchEngine(cfg)
 
-    with patch("gamedoctor.searcher.adapters.DuckDuckGoProvider.search") as mock_ddg:
+    with patch("aemeath_agent.searcher.adapters.DuckDuckGoProvider.search") as mock_ddg:
         mock_ddg.return_value = [
             SearchResult("Result", "http://test.com", "snippet", "duckduckgo", 0)
         ]

@@ -9,9 +9,9 @@ import os
 
 import pytest
 
-from gamedoctor import context_builder as cb
-from gamedoctor.models import RuntimeFingerprint
-from gamedoctor.utils import system_info
+from aemeath_agent import context_builder as cb
+from aemeath_agent.models import RuntimeFingerprint
+from aemeath_agent.utils import system_info
 
 
 @pytest.fixture

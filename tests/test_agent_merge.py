@@ -13,10 +13,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from gamedoctor.agents.base_agent import AgentTask
-from gamedoctor.agents.content.game_content_agent import GameContentAgent
-from gamedoctor.agents.health.perf_security_agent import PerfSecurityAgent
-from gamedoctor.orchestrator.agent_factory import (
+from aemeath_agent.agents.base_agent import AgentTask
+from aemeath_agent.agents.content.game_content_agent import GameContentAgent
+from aemeath_agent.agents.health.perf_security_agent import PerfSecurityAgent
+from aemeath_agent.orchestrator.agent_factory import (
     DEFAULT_AGENT_CONFIGS,
     AgentFactory,
     register_all_agents,
@@ -99,7 +99,7 @@ def test_perf_security_op_routing():
 # game_content 分流
 # --------------------------------------------------------------------- #
 def test_game_content_op_routing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    # saves 备份会写 ~/.gamedoctor，重定向 home
+    # saves 备份会写 ~/.aemeath_agent，重定向 home
     monkeypatch.setattr(Path, "home", lambda: tmp_path / "fakehome")
     saves = tmp_path / "saves"
     saves.mkdir()

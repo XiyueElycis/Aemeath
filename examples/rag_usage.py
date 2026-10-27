@@ -5,9 +5,9 @@
 
 from __future__ import annotations
 
-from gamedoctor.config import load
-from gamedoctor.knowledge.retriever import search_knowledge, check_and_index_games
-from gamedoctor.models import KnowledgeHit
+from aemeath_agent.config import load
+from aemeath_agent.knowledge.retriever import search_knowledge, check_and_index_games
+from aemeath_agent.models import KnowledgeHit
 
 
 def demo_rag_search():
@@ -38,7 +38,7 @@ def demo_rag_search():
             # 使用混合检索器
             cfg = load()
             if cfg.get("knowledge.use_vector", False):
-                from gamedoctor.knowledge.retriever import HybridRetriever
+                from aemeath_agent.knowledge.retriever import HybridRetriever
                 retriever = HybridRetriever(cfg)
                 results = retriever.search(query, query)
             else:
@@ -58,7 +58,7 @@ def demo_auto_index():
 
     # 检查可用游戏
     try:
-        from gamedoctor.knowledge.retriever import get_available_games
+        from aemeath_agent.knowledge.retriever import get_available_games
         games = get_available_games()
         print(f"数据目录中的游戏: {games}")
     except Exception as e:
